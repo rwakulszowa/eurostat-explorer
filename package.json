@@ -1,0 +1,17 @@
+{
+  "name": "eurostat-explorer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "pnpx @11ty/eleventy",
+    "serve": "pnpx @11ty/eleventy --serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "prettier": "^2.8.8"
+  }
+}
