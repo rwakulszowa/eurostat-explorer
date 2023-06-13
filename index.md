@@ -1,1 +1,5 @@
-# Eurostat explorer
+---
+layout: layout.njk
+---
+
+Home
