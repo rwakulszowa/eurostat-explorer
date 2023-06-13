@@ -10,6 +10,20 @@ title: Eurostat explorer
     <title>{{ title }}</title>
   </head>
   <body>
-    {{ content | safe }}
+    <nav aria-labelledby="navigation">
+      <h2 id="navigation">Navigation</h2>
+      {% set navPages = collections.datasetPages | get("data") %}
+      <ul>
+        {%- for entry in navPages %}
+          <li {% if entry.page.url == page.url %} aria-current="page" {% endif %}>
+            <a href="{{ entry.page.url }}">{{ entry.dataset }}
+            </a>
+          </li>
+        {%- endfor %}
+      </ul>
+    </nav>
+    <main>
+      {{ content | safe }}
+    </main>
   </body>
 </html>
