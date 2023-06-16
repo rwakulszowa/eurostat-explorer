@@ -6,10 +6,10 @@ pagination:
   addAllPagesToCollections: true
 tags: datasetPages
 
-permalink: "{{ dataset }}"
+permalink: "{{ dataset.id }}"
 
 layout: layout.njk
 ---
 <p>
-  Dataset: {{ dataset }}
+  Dataset: {{ dataset.id }} {{ dataset.description }}
 </p>

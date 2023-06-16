@@ -131,3 +131,4 @@ dist
 
 # 11ty
 _site/
+.cache

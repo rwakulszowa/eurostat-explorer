@@ -1,8 +1,5 @@
-const eleventyNavigationPlugin = require("@11ty/eleventy-navigation");
-
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addPlugin(eleventyNavigationPlugin);
-
+  // Map an array by picking `key` of each element.
   eleventyConfig.addFilter("get", function (value, key) {
     return value.map((v) => v[key]);
   });

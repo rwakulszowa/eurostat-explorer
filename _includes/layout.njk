@@ -15,8 +15,8 @@ title: Eurostat explorer
       {% set navPages = collections.datasetPages | get("data") %}
       <ul>
         {%- for entry in navPages %}
-          <li {% if entry.page.url == page.url %} aria-current="page" {% endif %}>
-            <a href="{{ entry.page.url }}">{{ entry.dataset }}
+          <li>
+            <a href="{{ entry.page.url }}">{{ entry.dataset.id }}
             </a>
           </li>
         {%- endfor %}
