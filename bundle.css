@@ -23,7 +23,7 @@ body {
   line-height: 1.25;
 }
 
-body > nav {
+body > dataset-nav {
   width: 16rem;
   flex: none;
 

@@ -1,0 +1,34 @@
+---
+permalink: scripts/dataset-nav.js
+---
+
+// Object containing nav items.
+// JSON is smaller than HTML - 11ty generates a JSON, and the browser will build an HTML out of it.
+// This way, the script file is smaller.
+//
+// TODO: consider extracting the JSON to a separate file and `fetch` here, if it still takes too long to load.
+const datasets = [
+{% set navPages = collections.datasetPages | get("data") %}
+{%- for entry in navPages %}
+  { id: "{{ entry.dataset.id }}", url: "{{ entry.page.url }}" },
+{%- endfor %}
+];
+
+class DatasetNav extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `
+      <nav aria-labelledby="navigation">
+        <h2 id="navigation">Datasets</h2>
+        <ul>
+          ${datasets.map(d => `
+            <li>
+              <a href="${d.url}">${d.id}</a>
+            </li>
+          `).join("\n")}
+        </ul>
+      </nav>
+    `;
+  }
+}
+
+customElements.define("dataset-nav", DatasetNav);
