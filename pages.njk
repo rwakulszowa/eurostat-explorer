@@ -13,3 +13,6 @@ layout: layout.njk
 <p>
   Dataset: {{ dataset.id }} {{ dataset.description }}
 </p>
+<pre>
+  {{ dataset | dump(2) }}
+</pre>
