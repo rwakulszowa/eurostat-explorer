@@ -15,8 +15,4 @@ layout: layout.njk
   Dataset: {{ dataset.id }}
   {{ dataset.description }}
 </p>
-<script type="module">
-  const resp = await fetch("./ {{ dataset.id }}.json");
-  const obj = await resp.json();
-  console.log(obj);
-</script>
+<dataset-plot dataset={{ dataset.id }}></dataset-plot>

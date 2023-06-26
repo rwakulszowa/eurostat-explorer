@@ -1,0 +1,51 @@
+---
+permalink: scripts/dataset-plot.js
+---
+
+// TODO: store locally
+import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+
+class DatasetPlot extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `
+      <div id="plot"></div>
+    `;
+    this.render();
+  }
+
+  get datasetId() {
+    const ret = this.getAttribute("dataset");
+    if (!ret) {
+      throw new Error("Attribute `dataset` is required.")
+    }
+    return ret;
+  }
+
+  async render() {
+    const resp = await fetch(`./${this.datasetId}.json`);
+    const { measurements } = await resp.json();
+
+    // TODO: actually read data from measurements, group by categories, etc.
+    const data = Object.entries(measurements.value)
+      .map(([i, v]) => ({
+        x: +i,
+        y: +v,
+      }))
+      .slice(0, 1000);
+
+    const plot = Plot.plot({
+      marks: [
+        Plot.line(data, {
+          x: "x",
+          y: "y",
+        }),
+      ],
+    });
+
+    // Add the plot to DOM.
+    const div = document.querySelector("#plot");
+    div.append(plot);
+  }
+}
+
+customElements.define("dataset-plot", DatasetPlot);
