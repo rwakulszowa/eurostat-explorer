@@ -44,11 +44,47 @@ async function fetchDetails(dataset) {
   });
 }
 
+/**
+ * Fetch measurements for a dataset.
+ */
+async function fetchMeasurements(dataset) {
+  const dimensions = Object.fromEntries(
+    dataset.details.dimensions.map((dim) => [
+      dim.code,
+      dim.positions.map((pos) => pos.code),
+    ])
+  );
+  const url = buildQuery(dataset.id, dimensions);
+  return await EleventyFetch(url, {
+    duration: "1w",
+    type: "json",
+  });
+}
+
+/**
+ * Given a dataset and its dimensions, generate a query.
+ * Based on https://ec.europa.eu/eurostat/web/query-builder/tool
+ *
+ * TODO: extract to a separate library
+ */
+function buildQuery(datasetId, dimensions) {
+  const searchParams = new URLSearchParams();
+  searchParams.append("format", "JSON");
+
+  // Add all dimensions to the query string.
+  for (const [dimName, dimValues] of Object.entries(dimensions)) {
+    for (const value of dimValues) {
+      searchParams.append(dimName, value);
+    }
+  }
+
+  return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/${datasetId}?${searchParams}`;
+}
+
 module.exports = async function () {
   const datasets = (await fetchDatasets())
     // Pick a subset of data while under development.
-    // TODO: some result return a 404. Filter them out and log to stdout.
-    .slice(0, 40);
+    .slice(10, 15);
 
   // For each dataset, fetch more details - description, update date and, most importantly, schema.
   const richDatasets = compact(
@@ -74,5 +110,13 @@ module.exports = async function () {
     )
   );
 
-  return richDatasets;
+  // For each dataset, fetch measured values.
+  const datasetsWithMeasurements = await Promise.all(
+    richDatasets.map(async (d) => ({
+      ...d,
+      measurements: await fetchMeasurements(d),
+    }))
+  );
+
+  return datasetsWithMeasurements;
 };
