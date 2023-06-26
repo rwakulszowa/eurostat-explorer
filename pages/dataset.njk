@@ -10,9 +10,13 @@ permalink: "{{ dataset.id }}"
 
 layout: layout.njk
 ---
+
 <p>
-  Dataset: {{ dataset.id }} {{ dataset.description }}
+  Dataset: {{ dataset.id }}
+  {{ dataset.description }}
 </p>
-<pre>
-  {{ dataset | dump(2) }}
-</pre>
+<script type="module">
+  const resp = await fetch("./ {{ dataset.id }}.json");
+  const obj = await resp.json();
+  console.log(obj);
+</script>
