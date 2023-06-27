@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "eleventy",
+    "build-gh": "eleventy --pathprefix=/eurostat-explorer/",
     "serve": "eleventy --serve"
   },
   "keywords": [],

@@ -43,7 +43,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Build the app
-        run: pnpm build
+        run: pnpm build-gh
       - name: Store build artifacts
         uses: actions/cache@v3
         with:

@@ -10,7 +10,7 @@ permalink: scripts/dataset-nav.js
 const datasets = [
 {% set navPages = collections.datasetPages | get("data") %}
 {%- for entry in navPages %}
-  { id: "{{ entry.dataset.id }}", url: "{{ entry.page.url }}" },
+  { id: "{{ entry.dataset.id }}", url: "{{ entry.page.url | url }}" },
 {%- endfor %}
 ];
 
