@@ -2,8 +2,8 @@
 permalink: scripts/dataset-plot.js
 ---
 
-// TODO: store locally
 import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
+import { groupByDimensions, indexToLabel } from "./eurostat-parser.js";
 
 class DatasetPlot extends HTMLElement {
   connectedCallback() {
@@ -16,7 +16,7 @@ class DatasetPlot extends HTMLElement {
   get datasetId() {
     const ret = this.getAttribute("dataset");
     if (!ret) {
-      throw new Error("Attribute `dataset` is required.")
+      throw new Error("Attribute `dataset` is required.");
     }
     return ret;
   }
@@ -25,19 +25,34 @@ class DatasetPlot extends HTMLElement {
     const resp = await fetch(`./${this.datasetId}.json`);
     const { measurements } = await resp.json();
 
-    // TODO: actually read data from measurements, group by categories, etc.
-    const data = Object.entries(measurements.value)
-      .map(([i, v]) => ({
-        x: +i,
-        y: +v,
+    // Map a category index to a human readable label.
+    // Ordered by dimension.
+    const categoryIndexToLabelPerDimension = measurements.id.map((dimId) =>
+      indexToLabel(measurements.dimension[dimId])
+    );
+
+    const timeDimensionIndex = measurements.id.indexOf("time");
+
+    const data = groupByDimensions(measurements).flatMap(({ key, values }) =>
+      values.map((v, i) => ({
+        key: key.toString(),
+        // Convert to a Date object representing the beginning of the year.
+        time: new Date(
+          categoryIndexToLabelPerDimension[timeDimensionIndex](i),
+          0
+        ),
+        value: measurements.value[v],
       }))
-      .slice(0, 1000);
+    );
 
     const plot = Plot.plot({
+      // color: {legend: true},
       marks: [
-        Plot.line(data, {
-          x: "x",
-          y: "y",
+        Plot.ruleY([0]),
+        Plot.lineY(data, {
+          x: "time",
+          y: "value",
+          stroke: "key",
         }),
       ],
     });
