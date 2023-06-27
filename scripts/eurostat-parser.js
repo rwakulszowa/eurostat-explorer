@@ -1,7 +1,3 @@
----
-permalink: scripts/eurostat-parser.js
----
-
 /**
  * Group `xs` by comparing the strning represenatation of `key(x)`.
  */
