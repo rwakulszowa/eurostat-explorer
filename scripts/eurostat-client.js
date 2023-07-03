@@ -1,4 +1,34 @@
 /**
+ * Fetch values for a dataset.
+ * `categoriesPerDimension` is a set of filters - some datasets are massive and fetching all
+ * data is either impractical or impossible. Use this argument to specify the subset of data
+ * you're interested in.
+ */
+export async function fetchDatasetValues(dataset, categoriesPerDimension) {
+  const url = buildQuery(dataset, categoriesPerDimension);
+  const resp = await fetch(url);
+  return await resp.json();
+}
+
+/**
+ * Given a dataset and its dimensions, generate a query.
+ * Based on https://ec.europa.eu/eurostat/web/query-builder/tool
+ */
+function buildQuery(dataset, categoriesPerDimension) {
+  const searchParams = new URLSearchParams();
+  searchParams.append("format", "JSON");
+
+  // Add all dimensions to the query string.
+  for (const [dimName, dimValues] of Object.entries(categoriesPerDimension)) {
+    for (const value of dimValues) {
+      searchParams.append(dimName, value);
+    }
+  }
+
+  return `https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/${dataset}?${searchParams}`;
+}
+
+/**
  * Group `xs` by comparing the strning represenatation of `key(x)`.
  */
 function groupBy(xs, key) {
@@ -77,13 +107,6 @@ export function groupByDimensions(data) {
     // Simply replace the value at time index with null to ignore it when grouping.
     ret[timeDimIndex] = null;
     return ret;
-  }
-
-  /**
-   * The opposite of `omitTime`. Pick only time index.
-   */
-  function pickTime(indices) {
-    return indices[timeDimIndex];
   }
 
   // Indices per category.
