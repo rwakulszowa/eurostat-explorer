@@ -5,10 +5,10 @@ import {
   fetchDatasetValues,
 } from "./eurostat-client.js";
 
-class DatasetPlot extends HTMLElement {
+class DatasetDisplay extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
-      <div id="plot"></div>
+      <span>Loading</span>
     `;
     this.render();
   }
@@ -21,11 +21,15 @@ class DatasetPlot extends HTMLElement {
     return ret;
   }
 
-  async render() {
+  async fetchStaticMetadata() {
     const resp = await fetch(`./${this.datasetId}.json`);
+    return resp.json();
+  }
+
+  async render() {
     const {
       details: { dimensions },
-    } = await resp.json();
+    } = await this.fetchStaticMetadata();
 
     const categoriesPerDimension = Object.fromEntries(
       dimensions.map(({ code, positions }) => {
@@ -104,11 +108,32 @@ class DatasetPlot extends HTMLElement {
       }));
     });
 
+    const plot = document.createElement("dataset-plot");
+    plot.setAttribute("key", "plot");
+    plot.data = data;
+    this.replaceChildren(plot);
+  }
+}
+
+class DatasetPlot extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `
+      <div id="${this.key}"></div>
+    `;
+    // Assume setters are invoked before connecting and we only need to render once.
+    this.render();
+  }
+
+  get key() {
+    return this.getAttribute("key");
+  }
+
+  render() {
     const plot = Plot.plot({
       color: { legend: true },
       marks: [
         Plot.ruleY([0]),
-        Plot.lineY(data, {
+        Plot.lineY(this.data, {
           x: "time",
           y: "value",
           stroke: "key",
@@ -116,10 +141,10 @@ class DatasetPlot extends HTMLElement {
       ],
     });
 
-    // Render.
-    const div = document.querySelector("#plot");
-    div.append(plot);
+    const div = document.querySelector(`#${this.key}`);
+    div.replaceChildren(plot);
   }
 }
 
+customElements.define("dataset-display", DatasetDisplay);
 customElements.define("dataset-plot", DatasetPlot);
