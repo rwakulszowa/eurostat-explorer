@@ -69,8 +69,8 @@ module.exports = async function () {
             throw e;
           }
         }
-      })
-    )
+      }),
+    ),
   );
 
   return richDatasets;

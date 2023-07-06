@@ -119,7 +119,7 @@ export function groupByDimensions(data) {
     Array(totalSize)
       .fill(null)
       .map((_, i) => ({ dims: indexToDims(i), i })),
-    omitTime
+    omitTime,
   );
 
   // Drop redundant information.
@@ -134,7 +134,7 @@ export function groupByDimensions(data) {
 
 export function indexToLabel(dimension) {
   const indexToKey = Object.fromEntries(
-    Object.entries(dimension.category.index).map(([k, v]) => [v, k])
+    Object.entries(dimension.category.index).map(([k, v]) => [v, k]),
   );
   const keyToLabel = dimension.category.label;
 

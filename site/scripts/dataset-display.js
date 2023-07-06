@@ -42,7 +42,7 @@ class DatasetDisplay extends HTMLElement {
         }
 
         return [code, positions.map((pos) => pos.code)];
-      })
+      }),
     );
 
     // Some dimensions specify a single category - either because
@@ -55,13 +55,13 @@ class DatasetDisplay extends HTMLElement {
         .filter(([_code, categories]) => categories.length == 1)
         .map(([code, _]) =>
           // API response for measurements uses lowercase dimension ids.
-          code.toLowerCase()
-        )
+          code.toLowerCase(),
+        ),
     );
 
     const measurements = await fetchDatasetValues(
       this.datasetId,
-      categoriesPerDimension
+      categoriesPerDimension,
     );
 
     // Map a dimension index to code.
@@ -70,7 +70,7 @@ class DatasetDisplay extends HTMLElement {
     // Map a category index to a human readable label.
     // Ordered by dimension.
     const categoryIndexToLabelPerDimension = measurements.id.map((dimId) =>
-      indexToLabel(measurements.dimension[dimId])
+      indexToLabel(measurements.dimension[dimId]),
     );
 
     // Convert a raw key (i.e. a set of ordered indices) to a human readable string.
@@ -79,7 +79,7 @@ class DatasetDisplay extends HTMLElement {
         key
           .map((k, i) => {
             const isSingletonDimension = singletonDimensions.has(
-              dimensionIndexToCode[i]
+              dimensionIndexToCode[i],
             );
             return isSingletonDimension
               ? undefined
@@ -102,7 +102,7 @@ class DatasetDisplay extends HTMLElement {
         // Convert to a Date object representing the beginning of the year.
         time: new Date(
           categoryIndexToLabelPerDimension[timeDimensionIndex](i),
-          0
+          0,
         ),
         value: measurements.value[v],
       }));

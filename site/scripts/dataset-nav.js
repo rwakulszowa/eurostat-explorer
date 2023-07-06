@@ -10,7 +10,7 @@ class DatasetNav extends HTMLElement {
             <li>
               <a href="${d.url}">${d.id}</a>
             </li>
-          `
+          `,
             )
             .join("\n")}
         </ul>

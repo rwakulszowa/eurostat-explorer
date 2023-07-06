@@ -25,6 +25,7 @@ jobs:
         uses: creyD/prettier_action@v4.3
         with:
           dry: true
+          prettier_version: 3.0.0
   build:
     needs: check
     runs-on: ubuntu-latest
