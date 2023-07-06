@@ -1,3 +1,6 @@
+// TODO: uprościć, wynieść do biblioteki z testami, pozbyć się zabawy z indeksami.
+// Also, przerobić na TS.
+// Całość to po prostu tabelka, a logika jest potrzebna tylko do grupowania i sortowania wymiarów.
 /**
  * Fetch values for a dataset.
  * `categoriesPerDimension` is a set of filters - some datasets are massive and fetching all

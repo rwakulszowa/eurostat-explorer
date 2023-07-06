@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "eleventy",
-    "build-gh": "eleventy --pathprefix=/eurostat-explorer/",
-    "serve": "eleventy --serve"
+    "build": "cd site && eleventy",
+    "build-gh": "cd site && eleventy --pathprefix=/eurostat-explorer/",
+    "serve": "cd site && eleventy --serve"
   },
   "keywords": [],
   "author": "",

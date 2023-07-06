@@ -47,7 +47,7 @@ jobs:
       - name: Store build artifacts
         uses: actions/cache@v3
         with:
-          path: _site/
+          path: site/_site/
           key: ${{ github.run_id }}
   deploy:
     needs: build
@@ -59,14 +59,14 @@ jobs:
       - name: Load artifacts
         uses: actions/cache@v3
         with:
-          path: _site/
+          path: site/_site/
           key: ${{ github.run_id }}
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: _site/
+          path: site/_site/
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
