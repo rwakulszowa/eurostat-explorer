@@ -1,12 +1,14 @@
 {
   "name": "eurostat-explorer",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "cd site && eleventy",
     "build-gh": "cd site && eleventy --pathprefix=/eurostat-explorer/",
-    "serve": "cd site && eleventy --serve"
+    "serve": "cd site && eleventy --serve",
+    "test": "ava"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +16,7 @@
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
     "@11ty/eleventy-fetch": "^4.0.0",
+    "ava": "^5.3.1",
     "lodash": "^4.17.21",
     "prettier": "^3.0.0",
     "xml2js": "^0.6.0"
