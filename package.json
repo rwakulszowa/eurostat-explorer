@@ -5,9 +5,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "cd site && eleventy",
-    "build-gh": "cd site && eleventy --pathprefix=/eurostat-explorer/",
-    "serve": "cd site && eleventy --serve",
+    "build": "cd site && eleventy --config=eleventy.cjs",
+    "build-gh": "cd site && eleventy --config=eleventy.cjs --pathprefix=/eurostat-explorer/",
+    "serve": "cd site && eleventy --config=eleventy.cjs --serve",
     "test": "ava"
   },
   "keywords": [],

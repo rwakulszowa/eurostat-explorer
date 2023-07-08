@@ -8,9 +8,9 @@ permalink: scripts/dataset-nav.js
 //
 // TODO: consider extracting the JSON to a separate file and `fetch` here, if it still takes too long to load.
 const datasets = [
-{% set navPages = collections.datasetPages | get("data") %}
+{% set navPages = collections.datasetPages %}
 {%- for entry in navPages %}
-  { id: "{{ entry.dataset.id }}", url: "{{ entry.page.url | url }}" },
+  { id: "{{ entry.data.dataset.id }}", url: "{{ entry.data.page.url | url }}" },
 {%- endfor %}
 ];
 
