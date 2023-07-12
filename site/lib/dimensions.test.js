@@ -2,58 +2,51 @@ import test from "ava";
 
 import { Dimensions } from "./dimensions.js";
 
-test("0d", (t) => {
-  const d = new Dimensions([]);
+test("4d slice", (t) => {
+  const a = { id: "a", size: 1 };
+  const b = { id: "b", size: 2 };
+  const c = { id: "c", size: 3 };
+  const d = { id: "d", size: 1 };
 
-  t.deepEqual(d.values(), null);
-});
+  const dims = new Dimensions([a, b, c, d]);
+  const [left, right] = dims.slice(2);
 
-test("1d", (t) => {
-  const d = new Dimensions([{ id: "a", size: 2 }]);
-
-  t.deepEqual(d.values(), [
-    { dim: "a", i: 0 },
-    { dim: "a", i: 1 },
+  t.deepEqual(left, [
+    [
+      { dim: a, i: 0 },
+      { dim: b, i: 0 },
+    ],
+    [
+      { dim: a, i: 0 },
+      { dim: b, i: 1 },
+    ],
   ]);
-});
 
-test("2d", (t) => {
-  const d = new Dimensions([
-    { id: "a", size: 2 },
-    { id: "b", size: 3 },
-  ]);
-
-  t.deepEqual(d.values(), [
-    {
-      dim: "a",
-      i: 0,
-      children: [
-        { dim: "b", i: 0 },
-        { dim: "b", i: 1 },
-        { dim: "b", i: 2 },
-      ],
-    },
-    {
-      dim: "a",
-      i: 1,
-      children: [
-        { dim: "b", i: 0 },
-        { dim: "b", i: 1 },
-        { dim: "b", i: 2 },
-      ],
-    },
+  t.deepEqual(right, [
+    [
+      { dim: c, i: 0 },
+      { dim: d, i: 0 },
+    ],
+    [
+      { dim: c, i: 1 },
+      { dim: d, i: 0 },
+    ],
+    [
+      { dim: c, i: 2 },
+      { dim: d, i: 0 },
+    ],
   ]);
 });
 
 test("reorder", (t) => {
-  const d = new Dimensions([
-    { id: "a", size: 2 },
-    { id: "b", size: 1 },
-    { id: "c", size: 2 },
-  ]);
+  const a = { id: "a", size: 1 };
+  const b = { id: "b", size: 2 };
+  const c = { id: "c", size: 2 };
+
+  const dims = new Dimensions([a, b, c]);
 
   // Put `c` first.
-  d.reorder((x, y) => {
+  dims.reorder((x, y) => {
     if (x === "c") {
       return -1;
     }
@@ -63,22 +56,17 @@ test("reorder", (t) => {
     return x.localeCompare(y);
   });
 
-  t.deepEqual(d.values(), [
-    {
-      dim: "c",
-      i: 0,
-      children: [
-        { dim: "a", i: 0, children: [{ dim: "b", i: 0 }] },
-        { dim: "a", i: 1, children: [{ dim: "b", i: 0 }] },
-      ],
-    },
-    {
-      dim: "c",
-      i: 1,
-      children: [
-        { dim: "a", i: 0, children: [{ dim: "b", i: 0 }] },
-        { dim: "a", i: 1, children: [{ dim: "b", i: 0 }] },
-      ],
-    },
+  const [left, right] = dims.slice(2);
+
+  t.deepEqual(left, [
+    [
+      { dim: c, i: 0 },
+      { dim: a, i: 0 },
+    ],
+    [
+      { dim: c, i: 1 },
+      { dim: a, i: 0 },
+    ],
   ]);
+  t.deepEqual(right, [[{ dim: b, i: 0 }], [{ dim: b, i: 1 }]]);
 });

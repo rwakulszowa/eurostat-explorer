@@ -1,6 +1,10 @@
-export function foo() {
-  return 42;
-}
+// Based on https://stackoverflow.com/a/43053803.
+// Added a fix for singleton arguments.
+const cartesian = (coeffs) =>
+  coeffs.reduce(
+    (acc, xs) => acc.flatMap((a) => xs.map((x) => [...a, x])),
+    [[]],
+  );
 
 export class Dimensions {
   constructor(dims) {
@@ -8,7 +12,7 @@ export class Dimensions {
     this._order = dims.map((d) => d.id);
 
     // Dimension metadata, keyed by dimension id.
-    this._dims = Object.fromEntries(dims.map((dim) => [dim.id, dim.size]));
+    this._dims = Object.fromEntries(dims.map((dim) => [dim.id, dim]));
   }
 
   reorder(key) {
@@ -19,34 +23,36 @@ export class Dimensions {
     return this._order.length;
   }
 
+  get dimensions() {
+    return this._order.map((d) => this._dims[d]);
+  }
+
   /**
-   * Iterate over the thing, one dimension at a time.
-   * Produces a tree.
+   * Divide into two sets of keys - left and right.
+   * When concatenated, they form a full key.
    */
-  values() {
-    if (this.length === 0) {
-      return null;
+  slice(at) {
+    function allKeys(dims) {
+      return cartesian(
+        dims.map((dim) =>
+          Array(dim.size)
+            .fill()
+            .map((_, i) => ({ i, dim })),
+        ),
+      );
     }
 
-    // Avoid JS `this` quirks, capture a local variable instead.
-    const ref = this;
+    const [leftDims, rightDims] = this._sliceIndices(at);
+    return [allKeys(leftDims), allKeys(rightDims)];
+  }
 
-    function inner(dimIndex) {
-      const dim = ref._order[dimIndex];
-      const dimSize = ref._dims[dim];
-      const isLastDim = dimIndex === ref.length - 1;
-      if (isLastDim) {
-        return Array(dimSize)
-          .fill()
-          .map((_, i) => ({ i, dim }));
-      } else {
-        const children = inner(dimIndex + 1);
-        return Array(dimSize)
-          .fill()
-          .map((_, i) => ({ i, dim, children }));
-      }
-    }
-
-    return inner(0);
+  /**
+   * Slice dimension indices into groups, at `at`.
+   */
+  _sliceIndices(at) {
+    const dims = this.dimensions;
+    const left = dims.slice(0, at);
+    const right = dims.slice(at);
+    return [left, right];
   }
 }
