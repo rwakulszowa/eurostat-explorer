@@ -27,10 +27,31 @@ async function fetchDatasets() {
     description: x["c:Name"].find((x) => x.$["xml:lang"] === "en")._,
   }));
 
+  // Some datasets contain a `$` and always return a 404.
+  // Filter them right away.
+  const { allowed, rejected } = datasets.reduce(
+    (acc, x) => {
+      if (x.id.includes("$")) {
+        acc.rejected.push(x);
+      } else {
+        acc.allowed.push(x);
+      }
+      return acc;
+    },
+    {
+      allowed: [],
+      rejected: [],
+    },
+  );
+
+  if (rejected) {
+    console.warn(`Rejected ${rejected.length} datasets containing a $ sign.`);
+  }
+
   // Sort the data alphabetically.
   // The pagination plugin / some 11ty magic can probably do that out of the box, but
   // let's just sort it as soon as we get it to keep the result deterministic.
-  return sortBy(datasets, "id");
+  return sortBy(allowed, "id");
 }
 
 /**
