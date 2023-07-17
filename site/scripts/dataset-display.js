@@ -1,9 +1,10 @@
 import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
 import {
-  groupByDimensions,
-  indexToLabel,
+  parseDimension,
   fetchDatasetValues,
+  categoriesToIndex,
 } from "./eurostat-client.js";
+import { Dimensions } from "./dimensions.js";
 
 class DatasetDisplay extends HTMLElement {
   connectedCallback() {
@@ -32,89 +33,115 @@ class DatasetDisplay extends HTMLElement {
     } = await this.fetchStaticMetadata();
 
     const categoriesPerDimension = Object.fromEntries(
-      dimensions.map(({ code, positions }) => {
-        // By default, we'll display values for a few objects across the timescale.
-        // Trim all other dimensions.
-        //
-        // TODO: add user controls to select interesting categories.
-        if (code !== "TIME") {
-          positions.splice(2);
-        }
-
-        return [code, positions.map((pos) => pos.code)];
-      }),
+      dimensions.map(({ code, positions }) => [
+        code,
+        positions.map((pos) => pos.code),
+      ]),
     );
 
-    // Some dimensions specify a single category - either because
-    // only one exists in Eurostat (e.g. Frequency is usually only Annual),
-    // or because of user selection.
-    // The view can use this information to display such dimensions differently,
-    // e.g. by excluding it from legend entries.
-    const singletonDimensions = new Set(
-      Object.entries(categoriesPerDimension)
-        .filter(([_code, categories]) => categories.length == 1)
-        .map(([code, _]) =>
-          // API response for measurements uses lowercase dimension ids.
-          code.toLowerCase(),
-        ),
-    );
-
-    const measurements = await fetchDatasetValues(
+    const datasetValues = await fetchDatasetValues(
       this.datasetId,
       categoriesPerDimension,
     );
 
-    // Map a dimension index to code.
-    const dimensionIndexToCode = measurements.id;
+    const parsedDimensions = datasetValues.id.map((dimId) => ({
+      ...parseDimension(datasetValues.dimension[dimId], dimId),
+      id: dimId,
+    }));
 
-    // Map a category index to a human readable label.
-    // Ordered by dimension.
-    const categoryIndexToLabelPerDimension = measurements.id.map((dimId) =>
-      indexToLabel(measurements.dimension[dimId]),
+    const dims = new Dimensions(
+      parsedDimensions.map((d, i) => ({
+        // Dimension index in raw data.
+        // `Dimensions` may get reordered, so we keep the original index here.
+        iDim: i,
+        id: d.id,
+        size: d.categories.length,
+      })),
     );
 
-    // Convert a raw key (i.e. a set of ordered indices) to a human readable string.
-    function rawKeyToString(key) {
-      return (
-        key
-          .map((k, i) => {
-            const isSingletonDimension = singletonDimensions.has(
-              dimensionIndexToCode[i],
-            );
-            return isSingletonDimension
-              ? undefined
-              : categoryIndexToLabelPerDimension[i](k);
-          })
-          // Redundant labels are mapped to undefined.
-          .filter((label) => !!label)
-          .join("-")
-      );
-    }
+    // We can display 2 dimensions per chart.
+    // Slice data, so that each element per left key gets a separate chart.
+    const sliceAt = dims.length - 2;
+    const [leftKeys, rightKeys] = dims.slice(sliceAt);
+    const rightDims = dims.dimensions.slice(sliceAt);
 
-    // Time dimension is a bit special. Items are grouped by all categories
-    // *except* time. After grouping, it's included in the value, not the key.
-    const timeDimensionIndex = measurements.id.indexOf("time");
+    // Per-plot data keys. We need them to map data format to plot format.
+    const plotDataKeys = rightDims.map(
+      (dim) => parsedDimensions[dim.iDim].label,
+    );
 
-    const data = groupByDimensions(measurements).flatMap(({ key, values }) => {
-      const keyLabel = rawKeyToString(key);
-      return values.map((v, i) => ({
-        key: keyLabel,
-        // Convert to a Date object representing the beginning of the year.
-        time: new Date(
-          categoryIndexToLabelPerDimension[timeDimensionIndex](i),
-          0,
+    // Common plot properties.
+    const plotDimensions = {
+      x: plotDataKeys[1],
+      y: "Value",
+      stroke: plotDataKeys[0],
+    };
+
+    // Precompute mappings for key segments.
+    // We don't want to perform any repetitive work inside a loop.
+    const richRightKeys = new Map(
+      rightKeys.map((right) => [
+        right,
+        Object.fromEntries(
+          right.map(({ i, dim }) => {
+            const richDim = parsedDimensions[dim.iDim];
+            const cat = richDim.categories[i];
+            return [richDim.label, cat.label];
+          }),
         ),
-        value: measurements.value[v],
-      }));
+      ]),
+    );
+
+    const elements = leftKeys.map((left) => {
+      const section = document.createElement("div");
+
+      const header = section.appendChild(document.createElement("div"));
+      const leftCategories = left.map(
+        ({ i, dim }) => parsedDimensions[dim.iDim].categories[i].label,
+      );
+      header.innerHTML = `<p>${leftCategories.join(" | ")}</p>`;
+
+      const data = rightKeys
+        .map((right) => ({ right, fullKey: left.concat(right) }))
+        .map(({ right, fullKey }) => {
+          // Convert back to format compatible with raw Eurostat data:
+          // category indices ordered by dimension indices.
+          //
+          // TODO: this can be precalculated once to avoid nlogn in a loop.
+          // Use `dims.dimensions` to determine current ordering.
+          const key = fullKey.map(({ i, dim }) => ({
+            iCat: i,
+            iDim: dim.iDim,
+          }));
+          key.sort((a, b) => a.iDim - b.iDim);
+          const categories = key.map((k) => k.iCat);
+
+          // Read value associated with the key.
+          const i = categoriesToIndex(datasetValues.size, categories);
+          const value = datasetValues.value[i];
+
+          // Build a Plot friendly datum.
+          return { Value: value, ...richRightKeys.get(right) };
+        });
+
+      const plot = section.appendChild(document.createElement("dataset-plot"));
+      plot.setAttribute("key", "plot-" + left.map((x) => x.i).join("-"));
+      plot.data = data;
+      plot.dimensions = plotDimensions;
+
+      return section;
     });
 
-    const plot = document.createElement("dataset-plot");
-    plot.setAttribute("key", "plot");
-    plot.data = data;
-    this.replaceChildren(plot);
+    this.replaceChildren(...elements);
   }
 }
 
+/**
+ * Simple plot with 3 dimensions.
+ * Apart from attributes, it reads the following properties:
+ * - data
+ * - dimensions
+ */
 class DatasetPlot extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
@@ -131,14 +158,7 @@ class DatasetPlot extends HTMLElement {
   render() {
     const plot = Plot.plot({
       color: { legend: true },
-      marks: [
-        Plot.ruleY([0]),
-        Plot.lineY(this.data, {
-          x: "time",
-          y: "value",
-          stroke: "key",
-        }),
-      ],
+      marks: [Plot.ruleY([0]), Plot.lineY(this.data, this.dimensions)],
     });
 
     const div = document.querySelector(`#${this.key}`);

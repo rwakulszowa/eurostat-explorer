@@ -47,7 +47,7 @@ async function fetchDetails(dataset) {
 module.exports = async function () {
   const datasets = (await fetchDatasets())
     // Pick a subset of data while under development.
-    .slice(10, 15);
+    .slice(0, 150);
 
   // For each dataset, fetch more details - description, update date and, most importantly, schema.
   const richDatasets = compact(
