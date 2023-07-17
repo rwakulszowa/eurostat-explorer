@@ -75,7 +75,6 @@ module.exports = async function () {
     await Promise.all(
       datasets.map(async (d) => {
         try {
-          const details = await fetchDetails(d.id);
           return {
             ...d,
             details: await fetchDetails(d.id),

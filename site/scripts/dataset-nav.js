@@ -7,10 +7,13 @@ class DatasetNav extends HTMLElement {
           ${datasets
             .map(
               (d) => `
-            <li>
-              <a href="${d.url}">${d.id}</a>
-            </li>
-          `,
+                <li>
+                  <a href="${d.url}">
+                    <p>${d.id}</p>
+                    <p>${d.description}</p>
+                  </a>
+                </li>
+              `,
             )
             .join("\n")}
         </ul>
