@@ -93,13 +93,9 @@ class DatasetDisplay extends HTMLElement {
     );
 
     const elements = leftKeys.map((left) => {
-      const section = document.createElement("div");
-
-      const header = section.appendChild(document.createElement("div"));
       const leftCategories = left.map(
-        ({ i, dim }) => parsedDimensions[dim.iDim].categories[i].label,
+        ({ i, dim }) => parsedDimensions[dim.iDim].categories[i],
       );
-      header.innerHTML = `<p>${leftCategories.join(" | ")}</p>`;
 
       const data = rightKeys
         .map((right) => ({ right, fullKey: left.concat(right) }))
@@ -124,8 +120,15 @@ class DatasetDisplay extends HTMLElement {
           return { Value: value, ...richRightKeys.get(right) };
         });
 
+      // Render.
+      const section = document.createElement("div");
+      const header = section.appendChild(document.createElement("div"));
+      header.innerHTML = `<p>
+          ${leftCategories.map((c) => c.label).join(" | ")}
+        </p>`;
+
       const plot = section.appendChild(document.createElement("dataset-plot"));
-      plot.setAttribute("key", "plot-" + left.map((x) => x.i).join("-"));
+      plot.setAttribute("key", leftCategories.map((c) => c.id).join("-"));
       plot.data = data;
       plot.dimensions = plotDimensions;
 
