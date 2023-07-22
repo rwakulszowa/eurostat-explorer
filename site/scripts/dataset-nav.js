@@ -3,20 +3,18 @@ class DatasetNav extends HTMLElement {
     this.innerHTML = `
       <nav aria-labelledby="navigation">
         <h2 id="navigation">Datasets</h2>
-        <ul>
+        <dl>
           ${datasets
             .map(
               (d) => `
-                <li>
-                  <a href="${d.url}">
-                    <p>${d.id}</p>
-                    <p>${d.description}</p>
-                  </a>
-                </li>
+                <a href="${d.url}">
+                  <dt>${d.id}</dt>
+                  <dd>${d.description}</dd>
+                </a>
               `,
             )
             .join("\n")}
-        </ul>
+        </dl>
       </nav>
     `;
   }
