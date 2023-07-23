@@ -132,3 +132,7 @@ dist
 # 11ty
 _site/
 .cache
+
+# cypress
+cypress/videos
+cypress/screenshots

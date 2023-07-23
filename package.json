@@ -7,8 +7,10 @@
   "scripts": {
     "build": "cd site && eleventy --config=eleventy.cjs",
     "build-gh": "cd site && eleventy --config=eleventy.cjs --pathprefix=/eurostat-explorer/",
+    "cypress-run": "cypress run",
     "serve": "cd site && eleventy --config=eleventy.cjs --serve",
-    "test": "ava"
+    "test": "ava",
+    "test-e2e": "start-server-and-test serve http://localhost:8080 cypress-run"
   },
   "keywords": [],
   "author": "",
@@ -17,8 +19,10 @@
     "@11ty/eleventy": "^2.0.1",
     "@11ty/eleventy-fetch": "^4.0.0",
     "ava": "^5.3.1",
+    "cypress": "^12.17.2",
     "lodash": "^4.17.21",
     "prettier": "^3.0.0",
+    "start-server-and-test": "^2.0.0",
     "xml2js": "^0.6.0"
   }
 }
