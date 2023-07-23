@@ -45,6 +45,11 @@ jobs:
         run: pnpm install
       - name: Test
         run: pnpm test
+      - name: Test Cypress
+        uses: cypress-io/github-action@v5
+        with:
+          start: pnpm serve
+          wait-on: "http://localhost:8080"
       - name: Build the app
         run: pnpm build-gh
       - name: Store build artifacts
