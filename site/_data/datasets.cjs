@@ -59,10 +59,18 @@ async function fetchDatasets() {
  */
 async function fetchDetails(dataset) {
   const url = `https://ec.europa.eu/eurostat/search-api/datasets/${dataset}/languages/en`;
-  return EleventyFetch(url, {
+  const resp = await EleventyFetch(url, {
     duration: "1w",
     type: "json",
   });
+
+  // Convert dimension ids to lowercase for consistency.
+  // Eurostat mixes both formats.
+  for (const dim of resp.dimensions) {
+    dim.code = dim.code.toLowerCase();
+  }
+
+  return resp;
 }
 
 module.exports = async function () {
