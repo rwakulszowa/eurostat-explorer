@@ -32,12 +32,12 @@ export function buildQuery(dataset, categoriesPerDimension) {
  * Parse Eurostat API funny format, with values separated from dimensions,
  * into a verbose list of key-value pairs.
  */
-export function parse(data) {
+export function parseValues(data) {
   const totalSize = data.size.reduce((x, y) => x * y, 1);
   const categories = indexToCategories(data.size);
 
   const dimensions = data.id.map((dimId) =>
-    parseDimension(data.dimension[dimId], dimId),
+    parseValuesDimension(data.dimension[dimId], dimId),
   );
 
   return Array(totalSize)
@@ -57,7 +57,7 @@ export function parse(data) {
  *
  * Where applicable, categories are converted to more specific types (e.g. Date).
  */
-export function parseDimension(rawDimension, dimId) {
+function parseValuesDimension(rawDimension, dimId) {
   const { label, category } = rawDimension;
 
   // Choose a label mapping function depending on the dimension.
@@ -72,6 +72,40 @@ export function parseDimension(rawDimension, dimId) {
     categories[catIndex] = { id: catId, label: mapLabel(catLabel) };
   }
   return { label, categories };
+}
+
+/**
+ * Parse Eurostat API dataset description into a richer JS object.
+ */
+export function parseDescription(description) {
+  return {
+    ...description,
+    dimensions: description.dimensions.map(parseDescriptionDimension),
+  };
+}
+
+/**
+ * Parse Eurostat API dimension, as received from the dataset description,
+ * into a richer JS object.
+ *
+ * Categories are converted to more specific types (e.g. Date).
+ */
+function parseDescriptionDimension(dim) {
+  // Choose a label mapping function depending on the dimension.
+  const mapLabel =
+    {
+      time: (y) => new Date(y, 0, 0),
+    }[dim.code] ?? ((x) => x);
+
+  const positions = dim.positions.map((pos) => ({
+    ...pos,
+    description: mapLabel(pos.description),
+  }));
+
+  return {
+    ...dim,
+    positions,
+  };
 }
 
 /**
@@ -125,4 +159,35 @@ export function categoriesToIndex(dimSizes, categories) {
     ret += cat;
   }
   return ret;
+}
+
+/**
+ * Build a function reordering an array based on `src` and `dst`,
+ * such that `f(src) == dst`.
+ * The idea is for the function to be used on lists that are different
+ * from `src`, but are ordered like `src`.
+ *
+ * `src` and `dst` must contain the same elements.
+ */
+export function reordering(src, dst) {
+  const srcOrdering = Object.fromEntries(src.map((x, i) => [x, i]));
+  const indexMapping = dst.map((x) => srcOrdering[x]);
+  return function reorder(xs) {
+    console.assert(
+      xs.length == indexMapping.length,
+      "Reordering items of varying lengths.",
+    );
+    return indexMapping.map((i) => xs[i]);
+  };
+}
+
+/**
+ * Build a function that reorders items based on ordering differences
+ * between Eurostat dataset description and actual dataset values.
+ */
+export function dimensionsReordering(description, values) {
+  return reordering(
+    description.dimensions.map((x) => x.code),
+    values.id,
+  );
 }

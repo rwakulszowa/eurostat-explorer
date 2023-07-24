@@ -9,7 +9,12 @@ test("4d slice", (t) => {
   const d = { id: "d", size: 1 };
 
   const dims = new Dimensions([a, b, c, d]);
-  const [left, right] = dims.slice(2);
+  const sliced = dims.slice(2);
+
+  t.deepEqual(sliced.leftDims(), [a, b]);
+  t.deepEqual(sliced.rightDims(), [c, d]);
+
+  const [left, right] = sliced.keys();
 
   t.deepEqual(left, [
     [
@@ -36,6 +41,12 @@ test("4d slice", (t) => {
       { dim: d, i: 0 },
     ],
   ]);
+
+  const restored = sliced.restoreKey(left[0], right[0]);
+  t.deepEqual(
+    restored.map((x) => x.dim),
+    [a, b, c, d],
+  );
 });
 
 test("reorder", (t) => {
@@ -56,7 +67,12 @@ test("reorder", (t) => {
     return x.localeCompare(y);
   });
 
-  const [left, right] = dims.slice(2);
+  const sliced = dims.slice(2);
+
+  t.deepEqual(sliced.leftDims(), [c, a]);
+  t.deepEqual(sliced.rightDims(), [b]);
+
+  const [left, right] = sliced.keys();
 
   t.deepEqual(left, [
     [
@@ -69,4 +85,10 @@ test("reorder", (t) => {
     ],
   ]);
   t.deepEqual(right, [[{ dim: b, i: 0 }], [{ dim: b, i: 1 }]]);
+
+  const restored = sliced.restoreKey(left[0], right[0]);
+  t.deepEqual(
+    restored.map((x) => x.dim),
+    [a, b, c],
+  );
 });
