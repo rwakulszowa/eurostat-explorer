@@ -66,9 +66,18 @@ class DatasetDisplay extends HTMLElement {
     // Dataset description and actual values follow a different dimension ordering mechanism.
     // This function allows quickly mapping between them.
     const reorder = dimensionsReordering(description, datasetValues);
+    const valuesPerSection = sections.map((s) =>
+      s.items.map((x) => {
+        const i = categoriesToIndex(datasetValues.size, reorder(x.valueKey));
+        const value = datasetValues.value[i];
+        const key = x.key;
+        return { key, value };
+      }),
+    );
 
-    for (const s of sections) {
-      s.handleValues(datasetValues, reorder);
+    for (const i in sections) {
+      const s = sections[i];
+      s.setValues(valuesPerSection[i]);
     }
   }
 }
@@ -89,12 +98,10 @@ class DatasetSection extends HTMLElement {
   }
 
   /**
-   * Given all dataset values, pick the interesting ones and render a plot.
-   *
-   * Note, this is suboptimal. Ideally, the caller will pick stuff and distribute
-   * the items. This is just temporary.
+   * Render a plot with the given values.
+   * It is assumed values size matches dimensions.
    */
-  handleValues(datasetValues, reorderKey) {
+  setValues(values) {
     const datum = this.items[0];
     const dimensionKeys = datum.key.map((k) => k.dim.description);
     const dimensions = {
@@ -103,11 +110,9 @@ class DatasetSection extends HTMLElement {
       stroke: dimensionKeys[0],
     };
 
-    const data = this.items.map((x) => {
-      const i = categoriesToIndex(datasetValues.size, reorderKey(x.valueKey));
-      const value = datasetValues.value[i];
+    const data = values.map(({ key, value }) => {
       const dims = Object.fromEntries(
-        x.key.map((k) => [k.dim.description, k.cat.description]),
+        key.map((k) => [k.dim.description, k.cat.description]),
       );
       return { Value: value, ...dims };
     });
