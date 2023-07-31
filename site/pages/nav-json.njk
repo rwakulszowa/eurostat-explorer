@@ -1,0 +1,13 @@
+---
+permalink: "_site/nav.json"
+---
+
+[{% set navPages = collections.datasetPages %}
+  {%- for entry in navPages %}
+    {
+      "id": "{{ entry.data.dataset.id }}",
+      "description": "{{ entry.data.dataset.description }}",
+      "url": "{{ entry.data.page.url | url }}"
+    }{% if not loop.last %}, {% endif %}
+  {%- endfor %}
+]
