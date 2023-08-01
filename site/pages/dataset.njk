@@ -11,8 +11,10 @@ permalink: "{{ dataset.id }}.html"
 layout: layout.njk
 ---
 
-<p>
-  Dataset: {{ dataset.id }}
+<h1>
+  {{ dataset.id }}
+</h1>
+<h2>
   {{ dataset.description }}
-</p>
+</h2>
 <dataset-display dataset={{ dataset.id }}></dataset-display>

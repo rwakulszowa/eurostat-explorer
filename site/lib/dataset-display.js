@@ -40,17 +40,33 @@ class DatasetDisplay extends HTMLElement {
     const sliceLength = 2;
     const datasetView = DatasetView.build(description, sliceLength);
 
+    const items = datasetView.items();
+
+    const datasetNav = document.createElement("dataset-nav");
+    datasetNav.items = items.map(({ key }) => ({
+      id: key.map((x) => x.cat.description).join(" | "),
+      description: key.map((x) => ({
+        dim: x.dim.description,
+        cat: x.cat.description,
+      })),
+    }));
+
     // Render a container for every plot.
     // Actual plot values are not available yet, but we want to display
     // the layout first.
-    const sections = datasetView.items().map(({ key, items }) => {
+    const sections = items.map(({ key, items }) => {
       const section = document.createElement("dataset-section");
       section.key = key;
       section.items = items;
+      section.setAttribute("id", key.map((x) => x.cat.description).join(" | "));
       return section;
     });
 
-    this.replaceChildren(...sections);
+    const sectionsContainer = document.createElement("div");
+    sectionsContainer.setAttribute("class", "sections-container");
+    sectionsContainer.replaceChildren(...sections);
+
+    this.replaceChildren(sectionsContainer, datasetNav);
 
     // Fetch actual values. The response is fairly large.
     const datasetValues = await fetchDatasetValues(
@@ -139,6 +155,37 @@ class DatasetPlot extends HTMLElement {
   }
 }
 
+/**
+ * Navigation for a single dataset.
+ * Allows jumping between plots on the same page.
+ */
+class DatasetNav extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `
+      <nav>
+        <dl>
+          ${this.items
+            .map(
+              (item) => `
+                <a href="#${item.id}">
+                  <dt>${item.id}</dt>
+                  <dd>
+                    <ul>
+                      ${item.description
+                        .map((x) => `<li>${x.dim}: ${x.cat}</li>`)
+                        .join("\n")}
+                    </ul>
+                  </dd>
+                </a>`,
+            )
+            .join("\n")}
+        </dl>
+      </nav>
+    `;
+  }
+}
+
 customElements.define("dataset-display", DatasetDisplay);
 customElements.define("dataset-section", DatasetSection);
 customElements.define("dataset-plot", DatasetPlot);
+customElements.define("dataset-nav", DatasetNav);
