@@ -15,9 +15,13 @@ body {
   margin-left: auto;
   margin-right: auto;
 
+  /* Leave a gap near all edges. */
+  padding: 0.5em;
+
   /* Divide the page vertically. */
   display: flex;
   flex-direction: row;
+  gap: 2em;
 
   /* Font. */
   line-height: 1.25;
@@ -55,6 +59,7 @@ dataset-display {
   height: 100%;
   display: flex;
   flex-direction: row;
+  gap: 2em;
 }
 
 dataset-display > .sections-container {
@@ -63,6 +68,7 @@ dataset-display > .sections-container {
   display: flex;
   flex-direction: column;
   overflow: auto;
+  gap: 1.5em;
 }
 
 main-nav {
