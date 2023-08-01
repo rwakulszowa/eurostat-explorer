@@ -33,12 +33,10 @@ a:hover {
   text-decoration: underline;
 }
 
-main-nav {
-  width: 16rem;
-  flex: none;
-
+nav {
   overflow-x: auto;
   overflow-y: scroll;
+  height: 100%;
 
   /* Make items a bit more spread out. */
   line-height: 1.5;
@@ -67,8 +65,12 @@ dataset-display > .sections-container {
   overflow: auto;
 }
 
-dataset-display > dataset-nav {
+main-nav {
+  width: 16em;
   flex: none;
-  overflow: auto;
-  height: 100%;
+}
+
+dataset-nav {
+  width: 16em;
+  flex: none;
 }

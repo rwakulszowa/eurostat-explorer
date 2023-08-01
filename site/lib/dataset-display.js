@@ -62,9 +62,20 @@ class DatasetDisplay extends HTMLElement {
       return section;
     });
 
+    // Header - short dataset description.
+    // Part of the sections container - it scrolls with sections.
+    const header = document.createElement("div");
+    const headerTitle = document.createElement("h1");
+    headerTitle.innerText = this.datasetId;
+
+    const headerSubtitle = document.createElement("h2");
+    headerSubtitle.innerText = description.title;
+
+    header.replaceChildren(headerTitle, headerSubtitle);
+
     const sectionsContainer = document.createElement("div");
     sectionsContainer.setAttribute("class", "sections-container");
-    sectionsContainer.replaceChildren(...sections);
+    sectionsContainer.replaceChildren(header, ...sections);
 
     this.replaceChildren(sectionsContainer, datasetNav);
 
