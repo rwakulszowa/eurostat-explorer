@@ -119,7 +119,7 @@ class DatasetSection extends HTMLElement {
 
     const plotContainer = document.createElement("div");
     this._plotContainer = plotContainer;
-    plotContainer.innerText = "Loading";
+    plotContainer.innerHTML = `<span class="placeholder">Loading</span>`;
 
     this.replaceChildren(header, plotContainer);
   }
@@ -158,6 +158,9 @@ class DatasetSection extends HTMLElement {
 class DatasetPlot extends HTMLElement {
   connectedCallback() {
     const plot = Plot.plot({
+      width: 960,
+      height: 720,
+      margin: 40,
       color: { legend: true },
       marks: [Plot.ruleY([0]), Plot.lineY(this.data, this.dimensions)],
     });

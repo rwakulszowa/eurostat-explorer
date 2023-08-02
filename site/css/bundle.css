@@ -11,7 +11,7 @@ body {
   width: 100%;
 
   /* Center the content, limit width. */
-  max-width: 96rem;
+  max-width: 120rem;
   margin-left: auto;
   margin-right: auto;
 
@@ -81,4 +81,14 @@ dataset-nav {
   overflow: scroll;
   /* Space for the scrollbar. */
   padding-right: 1em;
+}
+
+dataset-section .placeholder {
+  height: 25em;
+  display: inline-block;
+}
+
+/* Center plot within its container. */
+dataset-plot > figure > svg {
+  margin: auto;
 }
