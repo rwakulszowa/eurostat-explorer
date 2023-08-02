@@ -74,7 +74,7 @@ class DatasetDisplay extends HTMLElement {
     header.replaceChildren(headerTitle, headerSubtitle);
 
     const sectionsContainer = document.createElement("div");
-    sectionsContainer.setAttribute("class", "sections-container");
+    sectionsContainer.setAttribute("class", "sections-container scroll");
     sectionsContainer.replaceChildren(header, ...sections);
 
     this.replaceChildren(sectionsContainer, datasetNav);
@@ -173,7 +173,7 @@ class DatasetPlot extends HTMLElement {
 class DatasetNav extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
-      <nav>
+      <nav class="scroll">
         <dl>
           ${this.items
             .map(

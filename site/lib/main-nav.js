@@ -2,6 +2,7 @@ class MainNav extends HTMLElement {
   connectedCallback() {
     const nav = document.createElement("nav");
     nav.setAttribute("aria-labelledby", "navigation");
+    nav.setAttribute("class", "scroll");
 
     const header = nav.appendChild(document.createElement("h2"));
     header.setAttribute("id", "navigation");

@@ -38,10 +38,7 @@ a:hover {
 }
 
 nav {
-  overflow-x: auto;
-  overflow-y: scroll;
   height: 100%;
-
   /* Make items a bit more spread out. */
   line-height: 1.5;
   font-size: 0.85em;
@@ -67,7 +64,6 @@ dataset-display > .sections-container {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: auto;
   gap: 1.5em;
 }
 
@@ -79,4 +75,10 @@ main-nav {
 dataset-nav {
   width: 16em;
   flex: none;
+}
+
+.scroll {
+  overflow: scroll;
+  /* Space for the scrollbar. */
+  padding-right: 1em;
 }
