@@ -59,6 +59,15 @@ class DatasetDisplay extends HTMLElement {
       section.key = key;
       section.items = items;
       section.setAttribute("id", key.map((x) => x.cat.description).join(" | "));
+
+      // Fetch values only when the section becomes visible.
+      // Avoids overfetching and rendering the whole thing at once. It's actually
+      // quite a lot of data - it may hang the browser.
+      onVisible(section, () => {
+        console.log("Section is visible", key);
+        // TODO: actually fetch data.
+      });
+
       return section;
     });
 
@@ -203,3 +212,17 @@ customElements.define("dataset-display", DatasetDisplay);
 customElements.define("dataset-section", DatasetSection);
 customElements.define("dataset-plot", DatasetPlot);
 customElements.define("dataset-nav", DatasetNav);
+
+/**
+ * Trigger `callback` once, when `element` becomes visible.
+ */
+function onVisible(element, callback) {
+  new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.intersectionRatio > 0) {
+        callback(element);
+        observer.disconnect();
+      }
+    });
+  }).observe(element);
+}
