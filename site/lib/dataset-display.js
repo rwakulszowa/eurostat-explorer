@@ -171,11 +171,19 @@ class DatasetSection extends HTMLElement {
 class DatasetPlot extends HTMLElement {
   connectedCallback() {
     const plot = Plot.plot({
-      width: 960,
-      height: 720,
+      width: 800,
+      height: 600,
       margin: 40,
       color: { legend: true },
-      marks: [Plot.ruleY([0]), Plot.lineY(this.data, this.dimensions)],
+      marks: [
+        Plot.ruleY([0]),
+        Plot.lineY(this.data, {
+          ...this.dimensions,
+          curve: "natural",
+          marker: "dot",
+          tip: true,
+        }),
+      ],
     });
 
     this.replaceChildren(plot);
