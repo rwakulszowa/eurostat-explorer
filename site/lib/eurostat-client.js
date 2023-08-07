@@ -191,3 +191,69 @@ export function dimensionsReordering(description, values) {
     values.id,
   );
 }
+
+/**
+ * Cache-friendly interface to the Eurostat API for a single dataset.
+ * Maintains a cache of already fetched values. Fetches only the missing bits.
+ */
+export class DatasetValuesClient {
+  constructor(id, dimensions) {
+    this.id = id;
+    this.dimensions = dimensions;
+
+    // Initialize cache. All fetched values will be stored there.
+    const valuesCount = dimensions
+      .map((dim) => dim.positions.length)
+      .reduce((x, y) => x * y, 1);
+    this._cache = Array(valuesCount).fill(undefined);
+
+    // `dimensions` is a list.
+    // Precompute (id => index) for easier lookup.
+    this._dimensionIdToIndex = Object.fromEntries(
+      dimensions.map((dim, i) => [dim.code, i]),
+    );
+  }
+
+  /**
+   * Fetch values for selected categories, where categories are identified
+   * by their index, not the code.
+   *
+   * Returns only values, ordered by `this.dimensions`. It is the caller's
+   * responsibility to add category labels to values.
+   */
+  async fetchByIndices(categoryIndicesPerDimension) {
+    // Map category indices to codes.
+    const categoriesPerDimension = Object.fromEntries(
+      Object.entries(categoryIndicesPerDimension).map(([dim, catIs]) => [
+        dim,
+        catIs.map((i) => {
+          const dimension = this.dimensions[this._dimensionIdToIndex[dim]];
+          return dimension.positions[i].code;
+        }),
+      ]),
+    );
+
+    // Fetch.
+    const resp = await fetchDatasetValues(this.id, categoriesPerDimension);
+    const size = resp.size.reduce((x, y) => x * y, 1);
+
+    // Reorder the response to match original dimensions ordering.
+    const requestedOrder = this.dimensions.map((dim) => dim.code);
+    const reorderF = reordering(resp.id, requestedOrder);
+    const originalDimSizes = resp.size;
+    const requestedDimSizes = reorderF(originalDimSizes);
+    const originalCategoriesF = indexToCategories(resp.size);
+    const originalValues = resp.value; // NOTE: it's an Object, not an Array.
+    const reorderedValues = Array(size).fill();
+    for (let i = 0; i < size; i++) {
+      const originalCategories = originalCategoriesF(i);
+      const reorderedCategories = reorderF(originalCategories);
+      const newIndex = categoriesToIndex(
+        requestedDimSizes,
+        reorderedCategories,
+      );
+      reorderedValues[newIndex] = originalValues[i] ?? null;
+    }
+    return reorderedValues;
+  }
+}

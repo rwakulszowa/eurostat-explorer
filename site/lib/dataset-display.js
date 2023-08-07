@@ -4,6 +4,7 @@ import {
   categoriesToIndex,
   dimensionsReordering,
   parseDescription,
+  DatasetValuesClient,
 } from "./eurostat-client.js";
 import { DatasetView } from "./dataset-view.js";
 
@@ -40,6 +41,11 @@ class DatasetDisplay extends HTMLElement {
     const sliceLength = 2;
     const datasetView = DatasetView.build(description, sliceLength);
 
+    const datasetValuesClient = new DatasetValuesClient(
+      this.datasetId,
+      datasetView.slicedDimensions.dims.dimensions.map((x) => x.dim),
+    );
+
     const items = datasetView.items();
 
     const datasetNav = document.createElement("dataset-nav");
@@ -63,9 +69,35 @@ class DatasetDisplay extends HTMLElement {
       // Fetch values only when the section becomes visible.
       // Avoids overfetching and rendering the whole thing at once. It's actually
       // quite a lot of data - it may hang the browser.
-      onVisible(section, () => {
-        console.log("Section is visible", key);
-        // TODO: actually fetch data.
+      onVisible(section, async () => {
+        const singletonDimensionsSelection = Object.fromEntries(
+          key.map((k) => [k.dim.code, [k.iCat]]),
+        );
+        const fullDimensionsSelection = Object.fromEntries(
+          datasetView.slicedDimensions
+            .rightDims()
+            .map((dim) => [dim.dim.code, dim.dim.positions.map((_, i) => i)]),
+        );
+
+        const values = await datasetValuesClient.fetchByIndices({
+          ...singletonDimensionsSelection,
+          ...fullDimensionsSelection,
+        });
+
+        console.assert(
+          values.length,
+          items.length,
+          `Wrong values size. Expected ${items.length}, got ${values.length}.`,
+        );
+
+        // Enrich values with labels.
+        const richValues = items.map((x, i) => {
+          const value = values[i];
+          const key = x.key;
+          return { key, value };
+        });
+
+        section.setValues(richValues);
       });
 
       return section;
@@ -87,34 +119,6 @@ class DatasetDisplay extends HTMLElement {
     sectionsContainer.replaceChildren(header, ...sections);
 
     this.replaceChildren(sectionsContainer, datasetNav);
-
-    // Fetch actual values. The response is fairly large.
-    const datasetValues = await fetchDatasetValues(
-      this.datasetId,
-      Object.fromEntries(
-        description.dimensions.map(({ code, positions }) => [
-          code,
-          positions.map((pos) => pos.code),
-        ]),
-      ),
-    );
-
-    // Dataset description and actual values follow a different dimension ordering mechanism.
-    // This function allows quickly mapping between them.
-    const reorder = dimensionsReordering(description, datasetValues);
-    const valuesPerSection = sections.map((s) =>
-      s.items.map((x) => {
-        const i = categoriesToIndex(datasetValues.size, reorder(x.valueKey));
-        const value = datasetValues.value[i];
-        const key = x.key;
-        return { key, value };
-      }),
-    );
-
-    for (const i in sections) {
-      const s = sections[i];
-      s.setValues(valuesPerSection[i]);
-    }
   }
 }
 

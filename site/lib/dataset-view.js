@@ -55,7 +55,7 @@ export class DatasetView {
       return key.map((x) => {
         const dim = x.dim.dim;
         const cat = dim.positions[x.i];
-        return { dim, cat };
+        return { dim, cat, iCat: x.i };
       });
     }
     const [leftMap, rightMap] = [leftKeys, rightKeys].map(
