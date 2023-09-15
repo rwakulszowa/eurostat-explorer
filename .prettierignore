@@ -1,4 +1,8 @@
-.node_modules
+# Pnpm
+package.json
 pnpm-lock.yaml
-_site/
-.cache
+node_modules
+
+# Parcel
+dist
+.parcel-cache
