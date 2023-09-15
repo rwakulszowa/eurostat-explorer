@@ -9,6 +9,12 @@
     "build": "parcel build"
   },
   "devDependencies": {
+    "@parcel/transformer-postcss": "^2.9.3",
     "parcel": "latest"
+  },
+  "dependencies": {
+    "@parcel/config-default": "^2.9.3",
+    "postcss": "^8.4.29",
+    "tailwindcss": "^3.3.3"
   }
 }
