@@ -1,7 +1,11 @@
 import { DatasetViz } from "./components/dataset-viz";
-import { FakeEurostatClient, type EurostatClient } from "./lib/eurostat-client";
+import { WorkerClient } from "./lib/eurostat-client";
 
-const client = new FakeEurostatClient();
+const worker = new Worker(new URL("worker.ts", import.meta.url), {
+  type: "module",
+});
+
+const client = new WorkerClient(worker);
 
 DatasetViz.client = client;
 customElements.define("dataset-viz", DatasetViz);

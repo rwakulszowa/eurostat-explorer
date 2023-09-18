@@ -31,6 +31,14 @@ export class FakeEurostatClient implements EurostatClient {
   }
 
   private async fetch_(categories: Categories) {
+    // Random delay.
+    function sleep() {
+      const ms = Math.round(Math.random() * 4000);
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    await sleep();
+
     function year(y: number) {
       return new Date(y, 0, 0);
     }
@@ -56,5 +64,50 @@ export class FakeEurostatClient implements EurostatClient {
       }
       return true;
     });
+  }
+}
+
+/**
+ * Eurostat client communicating through a web worker.
+ */
+export class WorkerClient implements EurostatClient {
+  private worker: Worker;
+  private pending: Map<number, (rows: {}[]) => void>;
+
+  constructor(worker: Worker) {
+    if (worker.onmessage) {
+      throw new Error(`Worker 'onmessage' already bound.`);
+    }
+    this.pending = new Map();
+    this.worker = worker;
+    worker.onmessage = (e: MessageEvent<{ id: number; data: Array<{}> }>) => {
+      const {
+        data: { id, data },
+      } = e;
+      const resolve = this.pending.get(id)!;
+      this.pending.delete(id);
+      resolve(data);
+    };
+  }
+
+  /**
+   * Fetch data through a web worker.
+   */
+  fetch(datasetId: string, categories: Categories): Promise<{}[]> {
+    const requestId = Math.random();
+
+    // Build a new pending promise and save a reference to its resolver.
+    // It will be invoked when worker replies with the given id.
+    const promise = new Promise((resolve) => {
+      this.pending.set(requestId, resolve);
+    });
+
+    // Invoke the worker.
+    this.worker.postMessage({
+      id: requestId,
+      payload: { datasetId, categories },
+    });
+
+    return promise as any;
   }
 }
