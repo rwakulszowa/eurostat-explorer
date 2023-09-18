@@ -1,4 +1,5 @@
 import * as Plot from "@observablehq/plot";
+import type { EurostatClient, Categories } from "../lib/eurostat-client";
 
 /**
  * Visualizes a dataset.
@@ -8,6 +9,12 @@ import * as Plot from "@observablehq/plot";
  * the parent container should take care of choosing a reasonable size.
  */
 export class DatasetViz extends HTMLElement {
+  /**
+   * Client for the eurostat API.
+   * Must be injected before use.
+   */
+  static client: EurostatClient;
+
   connectedCallback() {
     // Display no placeholder - the caller takes care of that.
     this.render(this.datasetId, this.categories);
@@ -49,7 +56,7 @@ export class DatasetViz extends HTMLElement {
   }
 
   private async render(datasetId: string, categories: Categories) {
-    const data = await this.fetch(datasetId, categories);
+    const data = await DatasetViz.client.fetch(datasetId, categories);
     const plot = Plot.plot({
       width: 800,
       height: 600,
@@ -70,22 +77,4 @@ export class DatasetViz extends HTMLElement {
     // TODO: legend, description, etc.
     this.replaceChildren(plot);
   }
-
-  private async fetch(datasetId: string, categories: Categories) {
-    function year(y: number) {
-      return new Date(y, 0, 0);
-    }
-
-    // TODO: fetch real data
-    return [
-      { year: year(2020), geo: "UK", value: 100 },
-      { year: year(2021), geo: "UK", value: 150 },
-      { year: year(2022), geo: "UK", value: 120 },
-      { year: year(2020), geo: "FR", value: 200 },
-      { year: year(2021), geo: "FR", value: 180 },
-      { year: year(2022), geo: "FR", value: 130 },
-    ];
-  }
 }
-
-type Categories = Map<string, Array<string>>;
