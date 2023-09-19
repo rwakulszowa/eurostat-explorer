@@ -138,8 +138,8 @@ function parseValuesDimension(
   // Choose a label mapping function depending on the dimension.
   const mapLabel =
     {
-      time: (y: any) => new Date(y, 0, 0),
-    }[dimId] ?? ((x) => x);
+      time: yearToDate as any,
+    }[dimId] ?? ((x: any) => x);
 
   const categories: Array<{ id: string; label: string }> = [];
   for (const [catId, catIndex] of Object.entries(category.index)) {
@@ -147,6 +147,15 @@ function parseValuesDimension(
     categories[catIndex] = { id: catId, label: mapLabel(catLabel) };
   }
   return { label, categories };
+}
+
+/**
+ * Build a UTC date representing `year`.
+ */
+function yearToDate(year: number): Date {
+  const d = new Date(0);
+  d.setFullYear(year);
+  return d;
 }
 
 /**
