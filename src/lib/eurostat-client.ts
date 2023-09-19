@@ -1,16 +1,9 @@
-/**
- * Categories to fetch.
- * A single dataset may be divided into multiple dimensions and each dimension
- * consists of multiple categories. Fetching the whole dataset at once is slow (and
- * sometimes impossible). In practice, a single request will typically fetch data
- * for a subset of all categories.
- */
-export type Categories = Map<string, Array<string>>;
-
-/**
- * Dataset identifier.
- */
-export type DatasetId = string;
+import {
+  fetchDataset,
+  parseDatasetValues,
+  type Categories,
+  type DatasetId,
+} from "./eurostat-api";
 
 /**
  * Interface for eurostat clients.
@@ -20,6 +13,19 @@ export interface EurostatClient {
    * Fetch data for `categories` from `datasetId`.
    */
   fetch(datasetId: DatasetId, categories: Categories): Promise<Array<{}>>;
+}
+
+/**
+ * Client talking to the Eurostat API.
+ */
+export class HttpEurostatClient implements EurostatClient {
+  async fetch(
+    datasetId: DatasetId,
+    categories: Categories,
+  ): Promise<Array<{}>> {
+    const data = await fetchDataset(datasetId, categories);
+    return parseDatasetValues(data);
+  }
 }
 
 /**

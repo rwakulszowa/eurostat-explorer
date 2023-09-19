@@ -1,11 +1,7 @@
-import {
-  FakeEurostatClient,
-  Categories,
-  DatasetId,
-} from "./lib/eurostat-client";
+import { HttpEurostatClient } from "./lib/eurostat-client";
+import type { Categories, DatasetId } from "./lib/eurostat-api";
 
-// Temporary.
-const client = new FakeEurostatClient();
+const client = new HttpEurostatClient();
 
 type Message = {
   // Unique id identifying a message.

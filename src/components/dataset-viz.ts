@@ -64,9 +64,9 @@ export class DatasetViz extends HTMLElement {
       marks: [
         Plot.ruleY([0]),
         Plot.lineY(data, {
-          x: "year",
+          x: "Time",
           y: "value",
-          stroke: "geo",
+          stroke: "Geopolitical entity (reporting)",
           curve: "catmull-rom",
           marker: "dot",
           tip: true,
