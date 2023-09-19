@@ -19,23 +19,30 @@
       </div>
       <div class="navbar-end"></div>
     </nav>
+    <!-- Main takes the whole width and handles overflow. The scroll will be on the right edge of the screen. -->
     <main class="p-8 w-full overflow-y-auto flex-1">
-      <div id="dataset-description" class="leading-4">
-        <h1 class="uppercase text-lg font-bold">aact_ali01</h1>
-        <p>
-          Agricultural labour input statistics: absolute figures (1 000 annual
-          work units)
-        </p>
+      <!-- Centered content. -->
+      <div id="main-content-container" class="w-full lg:w-[800px] m-auto">
+        <header id="dataset-description" class="leading-4 m-4">
+          <h1 class="uppercase font-bold my-2">aact_ali01</h1>
+          <p class="text-lg">
+            Agricultural labour input statistics: absolute figures (1 000 annual
+            work units)
+          </p>
+        </header>
+        <!-- Charts layout behaves different than text layout above. A separate wrapper with auto margin to center the content. -->
+        <div class="mx-auto">
+          <dataset-viz dataset-id="aact_ali01" categories="itm_newa=40000"
+            >Loading</dataset-viz
+          >
+          <dataset-viz dataset-id="aact_ali01" categories="itm_newa=41000"
+            >Loading</dataset-viz
+          >
+          <dataset-viz dataset-id="aact_ali01" categories="itm_newa=42000"
+            >Loading</dataset-viz
+          >
+        </div>
       </div>
-      <dataset-viz dataset-id="aact_ali01" categories="itm_newa=40000"
-        >Loading</dataset-viz
-      >
-      <dataset-viz dataset-id="aact_ali01" categories="itm_newa=41000"
-        >Loading</dataset-viz
-      >
-      <dataset-viz dataset-id="aact_ali01" categories="itm_newa=42000"
-        >Loading</dataset-viz
-      >
     </main>
   </body>
 </html>
