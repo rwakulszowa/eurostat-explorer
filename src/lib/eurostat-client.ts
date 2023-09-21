@@ -53,11 +53,19 @@ export class FakeEurostatClient implements EurostatClient {
       .fill(null)
       .map((_, i) => year(2000 + i));
     const geos = ["UK", "FR", "DE", "PL"];
-    const allRows: Array<{ year: Date; geo: string; value: number }> = [];
+    const itm_newas = ["40000", "41000", "42000"];
+    const allRows: Array<{}> = [];
     for (const year of years) {
       for (const geo of geos) {
-        const value = Math.floor(Math.random() * 100);
-        allRows.push({ year, geo, value });
+        for (const itm_newa of itm_newas) {
+          const value = Math.floor(Math.random() * 100);
+          allRows.push({
+            Time: year,
+            "Geopolitical entity (reporting)": geo,
+            value,
+            itm_newa,
+          });
+        }
       }
     }
 
