@@ -11,6 +11,9 @@ type FetchReturn = {
   idToLabel: Map<string, { label: string; cat: Map<string, any> }>;
 };
 
+// Reexport.
+export { Categories };
+
 /**
  * Interface for eurostat clients.
  */
