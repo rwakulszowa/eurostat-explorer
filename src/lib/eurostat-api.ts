@@ -1,3 +1,5 @@
+import { yearToDate } from "./parseUtils";
+
 /**
  * Categories to fetch.
  * A single dataset may be divided into multiple dimensions and each dimension
@@ -95,32 +97,53 @@ function buildQuery(
 /**
  * Parse Eurostat API funny format, with values separated from dimensions,
  * into a verbose list of key-value pairs.
+ *
+ * Row dimensions and categories use ids, not labels, for consistency.
+ * id -> label mapping is returned as a separate object.
  */
-export function parseDatasetValues(data: DatasetDataRaw): Array<{}> {
+export function parseDatasetValues(data: DatasetDataRaw): {
+  rows: Array<{}>;
+  idToLabel: Map<string, { label: string; cat: Map<string, any> }>;
+} {
   const totalSize = data.size.reduce((x, y) => x * y, 1);
   const categories = indexToCategories(data.size);
 
-  const dimensions = data.id.map((dimId) =>
-    parseValuesDimension(data.dimension[dimId], dimId),
-  );
+  const dimensions: Array<[string, ReturnType<typeof parseValuesDimension>]> =
+    data.id.map((dimId) => [
+      dimId,
+      parseValuesDimension(data.dimension[dimId], dimId),
+    ]);
 
-  return Array(totalSize)
+  const rows = Array(totalSize)
     .fill(null)
     .map((_, valueI) => {
       const ret = {};
       const value = data.value[valueI];
 
       // (dimId, catId) pairs.
-      const labeledCategories = categories[valueI].map((catI, dimI) => {
-        const dim = dimensions[dimI];
-        const cat = dim.categories[catI];
-        return [dim.label, cat.label];
-      });
+      const labeledCategories: Array<[string, any]> = categories[valueI].map(
+        (catI, dimI) => {
+          const [dimId, dim] = dimensions[dimI];
+          const cat = dim.categories[catI];
+          return [dimId, cat.id];
+        },
+      );
 
       const entries = labeledCategories;
       entries.push(["value", value]);
       return Object.fromEntries(entries);
     });
+
+  const idToLabel = new Map(
+    dimensions.map(([dimId, dim]) => {
+      const { label: dimLabel, categories } = dim;
+      const cat = new Map(categories.map((cat) => [cat.id, cat.label]));
+
+      return [dimId, { label: dimLabel, cat }];
+    }),
+  );
+
+  return { rows, idToLabel };
 }
 
 /**
@@ -147,15 +170,6 @@ function parseValuesDimension(
     categories[catIndex] = { id: catId, label: mapLabel(catLabel) };
   }
   return { label, categories };
-}
-
-/**
- * Build a UTC date representing `year`.
- */
-function yearToDate(year: number): Date {
-  const d = new Date(0);
-  d.setFullYear(year);
-  return d;
 }
 
 /**

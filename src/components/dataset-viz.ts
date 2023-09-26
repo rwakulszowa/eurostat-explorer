@@ -56,17 +56,37 @@ export class DatasetViz extends HTMLElement {
   }
 
   private async render(datasetId: string, categories: Categories) {
-    const data = await DatasetViz.client.fetch(datasetId, categories);
+    const { rows, idToLabel } = await DatasetViz.client.fetch(
+      datasetId,
+      categories,
+    );
+
+    // Rows contain short ids, not human readable labels.
+    // Map to a more human friendly form.
+    const labelledRows = rows.map((r) =>
+      Object.fromEntries(
+        Object.entries(r).map(([dim, cat]) => {
+          // "value" requires special handling. It's a custom key, absent in the `idToLabel` map.
+          if (dim === "value") {
+            return ["Value", cat];
+          } else {
+            const dimLabels = idToLabel.get(dim)!;
+            return [dimLabels.label, dimLabels.cat.get(cat as string)!];
+          }
+        }),
+      ),
+    );
+
     const plot = Plot.plot({
       width: 800,
       height: 600,
       margin: 40,
       marks: [
         Plot.ruleY([0]),
-        Plot.lineY(data, {
-          x: "Time",
-          y: "value",
-          stroke: "Geopolitical entity (reporting)",
+        Plot.lineY(labelledRows, {
+          x: idToLabel.get("time")!.label,
+          y: "Value",
+          stroke: idToLabel.get("geo")!.label,
           curve: "catmull-rom",
           marker: "dot",
           tip: true,

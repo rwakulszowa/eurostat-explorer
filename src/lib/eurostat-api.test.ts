@@ -35,12 +35,38 @@ test("parse", (t) => {
     extension: { annotation: [], status: { label: {} } },
   };
 
-  t.deepEqual(parseDatasetValues(data), [
-    { X: "xa", Y: "ya", Z: "za", value: 0 },
-    { X: "xa", Y: "ya", Z: "zb", value: 1 },
-    { X: "xa", Y: "ya", Z: "zc", value: 2 },
-    { X: "xa", Y: "yb", Z: "za", value: 3 },
-    { X: "xa", Y: "yb", Z: "zb", value: 4 },
-    { X: "xa", Y: "yb", Z: "zc", value: 5 },
-  ]);
+  t.deepEqual(parseDatasetValues(data), {
+    rows: [
+      { x: "a", y: "a", z: "a", value: 0 },
+      { x: "a", y: "a", z: "b", value: 1 },
+      { x: "a", y: "a", z: "c", value: 2 },
+      { x: "a", y: "b", z: "a", value: 3 },
+      { x: "a", y: "b", z: "b", value: 4 },
+      { x: "a", y: "b", z: "c", value: 5 },
+    ],
+    idToLabel: new Map([
+      ["x", { label: "X", cat: new Map([["a", "xa"]]) }],
+      [
+        "y",
+        {
+          label: "Y",
+          cat: new Map([
+            ["a", "ya"],
+            ["b", "yb"],
+          ]),
+        },
+      ],
+      [
+        "z",
+        {
+          label: "Z",
+          cat: new Map([
+            ["a", "za"],
+            ["b", "zb"],
+            ["c", "zc"],
+          ]),
+        },
+      ],
+    ]),
+  });
 });

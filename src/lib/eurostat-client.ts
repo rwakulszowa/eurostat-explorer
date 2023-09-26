@@ -4,6 +4,12 @@ import {
   type Categories,
   type DatasetId,
 } from "./eurostat-api";
+import { yearToDate } from "./parseUtils";
+
+type FetchReturn = {
+  rows: Array<{}>;
+  idToLabel: Map<string, { label: string; cat: Map<string, any> }>;
+};
 
 /**
  * Interface for eurostat clients.
@@ -12,7 +18,7 @@ export interface EurostatClient {
   /**
    * Fetch data for `categories` from `datasetId`.
    */
-  fetch(datasetId: DatasetId, categories: Categories): Promise<Array<{}>>;
+  fetch(datasetId: DatasetId, categories: Categories): Promise<FetchReturn>;
 }
 
 /**
@@ -22,7 +28,7 @@ export class HttpEurostatClient implements EurostatClient {
   async fetch(
     datasetId: DatasetId,
     categories: Categories,
-  ): Promise<Array<{}>> {
+  ): Promise<FetchReturn> {
     const data = await fetchDataset(datasetId, categories);
     return parseDatasetValues(data);
   }
@@ -32,7 +38,7 @@ export class HttpEurostatClient implements EurostatClient {
  * Fake client for testing. Returns random data.
  */
 export class FakeEurostatClient implements EurostatClient {
-  fetch(datasetId: DatasetId, categories: Categories): Promise<Array<{}>> {
+  fetch(datasetId: DatasetId, categories: Categories): Promise<FetchReturn> {
     return this.fetch_(categories);
   }
 
@@ -45,23 +51,20 @@ export class FakeEurostatClient implements EurostatClient {
 
     await sleep();
 
-    function year(y: number) {
-      return new Date(y, 0, 0);
-    }
-
+    // For consistency, use strings for every dimension.
     const years = Array(10)
       .fill(null)
-      .map((_, i) => year(2000 + i));
+      .map((_, i) => (2000 + i).toString());
     const geos = ["UK", "FR", "DE", "PL"];
     const itm_newas = ["40000", "41000", "42000"];
     const allRows: Array<{}> = [];
-    for (const year of years) {
+    for (const time of years) {
       for (const geo of geos) {
         for (const itm_newa of itm_newas) {
           const value = Math.floor(Math.random() * 100);
           allRows.push({
-            Time: year,
-            "Geopolitical entity (reporting)": geo,
+            time,
+            geo,
             value,
             itm_newa,
           });
@@ -69,7 +72,22 @@ export class FakeEurostatClient implements EurostatClient {
       }
     }
 
-    return allRows.filter((r) => {
+    const idToLabel = new Map([
+      ["geo", { label: "Geo", cat: new Map(geos.map((g) => [g, g])) }],
+      [
+        "itm_newa",
+        { label: "ItmNewa", cat: new Map(itm_newas.map((x) => [x, x])) },
+      ],
+      [
+        "time",
+        {
+          label: "Time",
+          cat: new Map(years.map((y) => [y, yearToDate(parseInt(y))])),
+        },
+      ],
+    ]);
+
+    const rows = allRows.filter((r) => {
       for (const [dim, selectedCategories] of categories.entries()) {
         const cat = r[dim];
         if (!selectedCategories.includes(cat)) {
@@ -78,6 +96,8 @@ export class FakeEurostatClient implements EurostatClient {
       }
       return true;
     });
+
+    return { rows, idToLabel };
   }
 }
 
@@ -107,7 +127,7 @@ export class WorkerClient implements EurostatClient {
   /**
    * Fetch data through a web worker.
    */
-  fetch(datasetId: string, categories: Categories): Promise<{}[]> {
+  fetch(datasetId: string, categories: Categories): Promise<FetchReturn> {
     const requestId = Math.random();
 
     // Build a new pending promise and save a reference to its resolver.
