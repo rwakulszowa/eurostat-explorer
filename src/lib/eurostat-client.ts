@@ -90,6 +90,23 @@ export class FakeEurostatClient implements EurostatClient {
       ],
     ]);
 
+    // Remove unwanted categories.
+    for (const [dimId, { cat }] of idToLabel) {
+      for (const catId of cat.keys()) {
+        const maybeSelectedCategories = categories.get(dimId);
+        if (!maybeSelectedCategories) {
+          // Noop.
+          // If a dimension is not listed in `categories`, we pick all items.
+        } else {
+          // Pick a selected subset.
+          if (!maybeSelectedCategories.includes(catId)) {
+            cat.delete(catId);
+          }
+        }
+      }
+    }
+
+    // Remove unwanted rows.
     const rows = allRows.filter((r) => {
       for (const [dim, selectedCategories] of categories.entries()) {
         const cat = r[dim];
