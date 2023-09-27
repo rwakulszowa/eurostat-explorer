@@ -32,27 +32,66 @@
         </header>
         <!-- Charts layout behaves different than text layout above. A separate wrapper with auto margin to center the content. -->
         <div class="mx-auto flex flex-col gap-8">
-          <dataset-viz
-            dataset-id="aact_ali01"
-            categories="itm_newa=40000"
-            class="w-full p-4 aspect-video flex justify-center items-center border-2 shadow-xl"
-          >
-            <span class="loading loading-bars text-primary w-1/4"></span>
-          </dataset-viz>
-          <dataset-viz
-            dataset-id="aact_ali01"
-            categories="itm_newa=41000"
-            class="w-full p-4 aspect-video flex justify-center items-center border-2 shadow-xl"
-          >
-            <span class="loading loading-bars text-primary w-1/4"></span>
-          </dataset-viz>
-          <dataset-viz
-            dataset-id="aact_ali01"
-            categories="itm_newa=42000"
-            class="w-full p-4 aspect-video flex justify-center items-center border-2 shadow-xl"
-          >
-            <span class="loading loading-bars text-primary w-1/4"></span>
-          </dataset-viz>
+          <div class="w-full p-2 border-2 shadow-xl">
+            <ul class="stats text-sm">
+              <li class="stat">
+                <div class="stat-title">List of products - EAA</div>
+                <div class="stat-value text-xl">Total labour force input</div>
+              </li>
+              <li class="stat">
+                <div class="stat-title">Time frequency</div>
+                <div class="stat-value text-xl">Annual</div>
+              </li>
+            </ul>
+            <div class="divider m-0"></div>
+            <dataset-viz
+              dataset-id="aact_ali01"
+              categories="itm_newa=41000"
+              class="w-full aspect-video flex justify-center items-center"
+            >
+              <span class="loading loading-bars text-primary w-1/4"></span>
+            </dataset-viz>
+          </div>
+          <div class="w-full p-2 border-2 shadow-xl">
+            <ul class="stats text-sm">
+              <li class="stat">
+                <div class="stat-title">List of products - EAA</div>
+                <div class="stat-value text-xl">Non-salaried</div>
+              </li>
+              <li class="stat">
+                <div class="stat-title">Time frequency</div>
+                <div class="stat-value text-xl">Annual</div>
+              </li>
+            </ul>
+            <div class="divider m-0"></div>
+            <dataset-viz
+              dataset-id="aact_ali01"
+              categories="itm_newa=42000"
+              class="w-full aspect-video flex justify-center items-center"
+            >
+              <span class="loading loading-bars text-primary w-1/4"></span>
+            </dataset-viz>
+          </div>
+          <div class="w-full p-2 border-2 shadow-xl">
+            <ul class="stats text-sm">
+              <li class="stat">
+                <div class="stat-title">List of products - EAA</div>
+                <div class="stat-value text-xl">Salaried</div>
+              </li>
+              <li class="stat">
+                <div class="stat-title">Time frequency</div>
+                <div class="stat-value text-xl">Annual</div>
+              </li>
+            </ul>
+            <div class="divider m-0"></div>
+            <dataset-viz
+              dataset-id="aact_ali01"
+              categories="itm_newa=40000"
+              class="w-full aspect-video flex justify-center items-center"
+            >
+              <span class="loading loading-bars text-primary w-1/4"></span>
+            </dataset-viz>
+          </div>
         </div>
       </div>
     </main>
