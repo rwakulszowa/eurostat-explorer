@@ -78,8 +78,8 @@ export class DatasetViz extends HTMLElement {
     );
 
     const plot = Plot.plot({
-      width: 800,
-      height: 600,
+      width: 720,
+      height: 480,
       margin: 40,
       marks: [
         Plot.ruleY([0]),
