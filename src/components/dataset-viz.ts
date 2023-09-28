@@ -77,31 +77,73 @@ export class DatasetViz extends HTMLElement {
       ),
     );
 
-    const plot = document.createElement("dataset-viz-plot") as DatasetVizPlot;
-    plot.rows = labelledRows;
-    plot.scales = {
+    const scales = {
       x: idToLabel.get("time")!.label,
       y: "Value",
       stroke: idToLabel.get("geo")!.label,
     };
 
+    // List of all geo entries.
+    const geos: string[] = Array.from(idToLabel.get("geo")!.cat.values());
+    geos.sort();
+    const color = Plot.scale({
+      color: {
+        type: "ordinal",
+        scheme: "YlGnBu",
+        domain: geos,
+        range: [0.2, 1],
+      },
+    });
+
+    const legendItems = geos.map((geo) => ({
+      key: geo,
+      color: color.apply(geo),
+    }));
+
+    // DOM.
+    const plot = document.createElement("dataset-viz-plot") as DatasetVizPlot;
+    plot.classList.add("w-4/5");
+    plot.rows = labelledRows;
+    plot.scales = scales;
+    plot.color = color;
+
+    const legend = document.createElement(
+      "dataset-viz-legend",
+    ) as DatasetVizLegend;
+    legend.classList.add("w-1/5", "text-xs", "h-full", "overflow-auto");
+    legend.items = legendItems;
+
+    const container = document.createElement("div");
+    container.classList.add(
+      "flex",
+      "flex-row",
+      "w-full",
+      "h-full",
+      "overflow-hidden",
+    );
+    container.replaceChildren(plot, legend);
+
     // TODO: legend, description, etc.
-    this.replaceChildren(plot);
+    this.replaceChildren(container);
   }
 }
 
 /**
- * Renders a chart.
+ * Renders a plot.
  */
 export class DatasetVizPlot extends HTMLElement {
   rows: Array<{ [key: string]: any }>;
   scales: { x: string; y: string; stroke: string };
+  color: Plot.Scale;
 
   connectedCallback() {
     const plot = Plot.plot({
-      width: 720,
-      height: 480,
+      width: 800,
+      height: 500,
       margin: 40,
+      color: this.color,
+      x: { label: null, nice: true },
+      y: { grid: true, label: null, nice: true, zero: true },
       marks: [
         Plot.ruleY([0]),
         Plot.lineY(this.rows, {
@@ -113,5 +155,28 @@ export class DatasetVizPlot extends HTMLElement {
       ],
     });
     this.replaceChildren(plot);
+  }
+}
+
+/**
+ * Renders a plot legend.
+ */
+export class DatasetVizLegend extends HTMLElement {
+  items: Array<{ key: string; color: string }>;
+
+  connectedCallback() {
+    this.innerHTML = `
+      <ul class="flex flex-col gap-1 h-full">
+        ${this.items
+          .map(
+            ({ key, color }) =>
+              `<li>
+                <span style="background-color:${color}" class="inline-block mr-2 w-4 h-4 align-middle"></span>
+                <span>${key}</span>
+              </li>`,
+          )
+          .join("")}
+      </ul>
+    `;
   }
 }

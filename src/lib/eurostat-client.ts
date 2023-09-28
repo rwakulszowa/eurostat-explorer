@@ -58,7 +58,7 @@ export class FakeEurostatClient implements EurostatClient {
     const years = Array(10)
       .fill(null)
       .map((_, i) => (2000 + i).toString());
-    const geos = ["UK", "FR", "DE", "PL"];
+    const geos = ["UK", "FR", "DE", "PL", "CZ", "SK", "HU"];
     const itm_newas = ["40000", "41000", "42000"];
     const allRows: Array<{}> = [];
     for (const time of years) {
