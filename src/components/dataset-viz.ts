@@ -139,17 +139,16 @@ export class DatasetVizPlot extends HTMLElement {
   connectedCallback() {
     const plot = Plot.plot({
       width: 800,
-      height: 500,
+      height: 560,
       margin: 40,
       color: this.color,
-      x: { label: null, nice: true },
+      x: { label: null },
       y: { grid: true, label: null, nice: true, zero: true },
       marks: [
         Plot.ruleY([0]),
         Plot.lineY(this.rows, {
           ...this.scales,
-          curve: "catmull-rom",
-          marker: "dot",
+          curve: "monotone-x",
           tip: true,
         }),
       ],
