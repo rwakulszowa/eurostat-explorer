@@ -77,24 +77,41 @@ export class DatasetViz extends HTMLElement {
       ),
     );
 
+    const plot = document.createElement("dataset-viz-plot") as DatasetVizPlot;
+    plot.rows = labelledRows;
+    plot.scales = {
+      x: idToLabel.get("time")!.label,
+      y: "Value",
+      stroke: idToLabel.get("geo")!.label,
+    };
+
+    // TODO: legend, description, etc.
+    this.replaceChildren(plot);
+  }
+}
+
+/**
+ * Renders a chart.
+ */
+export class DatasetVizPlot extends HTMLElement {
+  rows: Array<{ [key: string]: any }>;
+  scales: { x: string; y: string; stroke: string };
+
+  connectedCallback() {
     const plot = Plot.plot({
       width: 720,
       height: 480,
       margin: 40,
       marks: [
         Plot.ruleY([0]),
-        Plot.lineY(labelledRows, {
-          x: idToLabel.get("time")!.label,
-          y: "Value",
-          stroke: idToLabel.get("geo")!.label,
+        Plot.lineY(this.rows, {
+          ...this.scales,
           curve: "catmull-rom",
           marker: "dot",
           tip: true,
         }),
       ],
     });
-
-    // TODO: legend, description, etc.
     this.replaceChildren(plot);
   }
 }

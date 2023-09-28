@@ -1,4 +1,4 @@
-import { DatasetViz } from "./components/dataset-viz";
+import { DatasetViz, DatasetVizPlot } from "./components/dataset-viz";
 import { WorkerClient } from "./lib/eurostat-client";
 
 const worker = new Worker(new URL("worker.ts", import.meta.url), {
@@ -9,3 +9,4 @@ const client = new WorkerClient(worker);
 
 DatasetViz.client = client;
 customElements.define("dataset-viz", DatasetViz);
+customElements.define("dataset-viz-plot", DatasetVizPlot);
