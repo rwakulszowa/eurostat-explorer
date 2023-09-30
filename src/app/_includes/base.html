@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+
+  <body class="overflow-hidden w-screen h-screen flex flex-col">
+    <nav class="navbar border-b-2 flex-none">
+      <div class="navbar-start">
+        <a
+          class="btn btn-ghost normal-case text-base-content opacity-75"
+          href="/"
+          >eurostat explorer</a
+        >
+      </div>
+    </nav>
+    <!-- Main takes the whole width and handles overflow. The scroll will be on the right edge of the screen. -->
+    <main class="px-8 py-2 w-full overflow-y-auto flex-1">
+      {{ content | safe }}
+    </main>
+  </body>
+</html>
