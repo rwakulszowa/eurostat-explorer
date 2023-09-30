@@ -1,13 +1,6 @@
 # Pnpm
 node_modules
 
-# Parcel
-dist
-.parcel-cache
-
-# Build
-build/*
-!build/.gitkeep
-
 # 11ty
 _site
+.cache

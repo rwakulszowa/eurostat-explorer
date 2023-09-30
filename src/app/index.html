@@ -4,28 +4,15 @@ title: Eurostat Explorer
 ---
 
 <dl class="flex flex-row flex-wrap gap-4">
+  {% for dp in collections.datasetPages %}
   <a
-    href="./datasets/aact_ali01/"
+    href="{{ dp.data.page.url | url }}"
     class="link link-hover card w-96 bg-base-100 shadow-xl"
   >
     <div class="card-body">
-      <dt class="card-title">aact_ali01</dt>
-      <dd>
-        Agricultural labour input statistics: absolute figures (1 000 annual
-        work units)
-      </dd>
+      <dt class="card-title">{{ dp.data.dataset.code }}</dt>
+      <dd>{{ dp.data.dataset.title }}</dd>
     </div>
   </a>
-  <a
-    href="./datasets/aact_ali01/"
-    class="link link-hover card w-96 bg-base-100 shadow-xl"
-  >
-    <div class="card-body">
-      <dt class="card-title">aact_ali01</dt>
-      <dd>
-        Agricultural labour input statistics: absolute figures (1 000 annual
-        work units)
-      </dd>
-    </div>
-  </a>
+  {% endfor %}
 </dl>
