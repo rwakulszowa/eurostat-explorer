@@ -1,5 +1,5 @@
-import { FakeEurostatClient, HttpEurostatClient } from "./lib/eurostat-client";
-import type { Categories, DatasetId } from "./lib/eurostat-api";
+import { FakeEurostatClient, HttpEurostatClient } from "../lib/eurostat-client";
+import type { Categories, DatasetId } from "../lib/eurostat-api";
 
 const client = new FakeEurostatClient();
 

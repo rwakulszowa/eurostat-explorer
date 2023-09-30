@@ -2,8 +2,8 @@ import {
   DatasetViz,
   DatasetVizLegend,
   DatasetVizPlot,
-} from "./components/dataset-viz";
-import { WorkerClient } from "./lib/eurostat-client";
+} from "../components/dataset-viz";
+import { WorkerClient } from "../lib/eurostat-client";
 
 const worker = new Worker(new URL("worker.ts", import.meta.url), {
   type: "module",
