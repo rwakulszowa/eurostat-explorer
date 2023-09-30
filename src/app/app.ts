@@ -5,7 +5,7 @@ import {
 } from "../components/dataset-viz";
 import { WorkerClient } from "../lib/eurostat-client";
 
-const worker = new Worker(new URL("worker.ts", import.meta.url), {
+const worker = new Worker("/worker.js", {
   type: "module",
 });
 

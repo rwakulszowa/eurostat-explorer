@@ -8,3 +8,6 @@ dist
 # Build
 build/*
 !build/.gitkeep
+
+# 11ty
+_site

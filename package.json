@@ -2,22 +2,21 @@
   "name": "eurostat-explorer",
   "version": "0.0.1",
   "description": "",
-  "source": "src/app/index.html",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
-    "start": "parcel",
-    "build": "parcel build",
+    "start": "npx @11ty/eleventy --serve",
+    "build": "npx @11ty/eleventy",
     "build:fetch": "node scripts/fetchDatasetDetails.mjs build/datasets.json",
     "test": "ava"
   },
   "devDependencies": {
-    "@parcel/transformer-postcss": "^2.9.3",
-    "parcel": "latest",
+    "@11ty/eleventy": "^2.0.1",
+    "esbuild": "^0.19.4",
+    "esbuild-postcss": "^0.0.4",
     "xml2js": "^0.6.2"
   },
   "dependencies": {
     "@observablehq/plot": "^0.6.10",
-    "@parcel/config-default": "^2.9.3",
     "ava": "^5.3.1",
     "daisyui": "^3.7.4",
     "postcss": "^8.4.29",
