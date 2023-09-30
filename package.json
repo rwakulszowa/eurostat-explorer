@@ -7,11 +7,13 @@
   "scripts": {
     "start": "parcel",
     "build": "parcel build",
+    "build:fetch": "node scripts/fetchDatasetDetails.mjs build/datasets.json",
     "test": "ava"
   },
   "devDependencies": {
     "@parcel/transformer-postcss": "^2.9.3",
-    "parcel": "latest"
+    "parcel": "latest",
+    "xml2js": "^0.6.2"
   },
   "dependencies": {
     "@observablehq/plot": "^0.6.10",
