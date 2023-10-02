@@ -1,5 +1,5 @@
 import * as Plot from "@observablehq/plot";
-import type { EurostatClient, Categories } from "../lib/eurostat-client";
+import type { EurostatClient, Categories } from "../../lib/eurostat-client";
 
 /**
  * Visualizes a dataset.

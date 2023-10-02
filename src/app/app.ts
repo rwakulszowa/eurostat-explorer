@@ -2,7 +2,7 @@ import {
   DatasetViz,
   DatasetVizLegend,
   DatasetVizPlot,
-} from "../components/dataset-viz";
+} from "./components/dataset-viz";
 import { WorkerClient } from "../lib/eurostat-client";
 
 const worker = new Worker("/worker.js", {

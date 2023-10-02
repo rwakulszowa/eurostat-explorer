@@ -4,8 +4,8 @@
   "description": "",
   "browserslist": "> 0.5%, last 2 versions, not dead",
   "scripts": {
-    "start": "npx @11ty/eleventy --serve",
-    "build": "npx @11ty/eleventy",
+    "start": "cd src/app && npx @11ty/eleventy --serve",
+    "build": "cd src/app && npx @11ty/eleventy",
     "test": "ava"
   },
   "devDependencies": {

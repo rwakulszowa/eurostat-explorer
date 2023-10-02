@@ -2,25 +2,25 @@ const esbuild = require("esbuild");
 const postcss = require("esbuild-postcss");
 
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addWatchTarget("./src/");
+  eleventyConfig.addWatchTarget("../");
 
   eleventyConfig.on("eleventy.before", async () => {
     const app = esbuild.build({
-      entryPoints: ["src/app/app.ts"],
+      entryPoints: ["app.ts"],
       bundle: true,
       outdir: "_site/",
       sourcemap: true,
     });
 
     const worker = esbuild.build({
-      entryPoints: ["src/app/worker.ts"],
+      entryPoints: ["worker.ts"],
       bundle: true,
       outdir: "_site/",
       sourcemap: true,
     });
 
     const css = esbuild.build({
-      entryPoints: ["src/app/styles.css"],
+      entryPoints: ["styles.css"],
       bundle: true,
       outdir: "_site/",
       plugins: [postcss()],
@@ -30,7 +30,6 @@ module.exports = function (eleventyConfig) {
   });
 
   return {
-    dir: { input: "src/app/" },
     htmlTemplateEngine: "njk",
   };
 };
