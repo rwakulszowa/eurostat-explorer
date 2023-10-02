@@ -58,24 +58,32 @@ export class FakeEurostatClient implements EurostatClient {
     const years = Array(10)
       .fill(null)
       .map((_, i) => (2000 + i).toString());
+    const freqs = ["A"];
     const geos = ["UK", "FR", "DE", "PL", "CZ", "SK", "HU"];
     const itm_newas = ["40000", "41000", "42000"];
     const allRows: Array<{}> = [];
-    for (const time of years) {
-      for (const geo of geos) {
-        for (const itm_newa of itm_newas) {
-          const value = Math.floor(Math.random() * 100);
-          allRows.push({
-            time,
-            geo,
-            value,
-            itm_newa,
-          });
+    for (const freq of freqs) {
+      for (const time of years) {
+        for (const geo of geos) {
+          for (const itm_newa of itm_newas) {
+            const value = Math.floor(Math.random() * 100);
+            allRows.push({
+              freq,
+              time,
+              geo,
+              value,
+              itm_newa,
+            });
+          }
         }
       }
     }
 
     const idToLabel = new Map([
+      [
+        "freq",
+        { label: "Time frequency", cat: new Map(freqs.map((f) => [f, f])) },
+      ],
       ["geo", { label: "Geo", cat: new Map(geos.map((g) => [g, g])) }],
       [
         "itm_newa",

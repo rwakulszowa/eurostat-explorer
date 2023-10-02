@@ -11,10 +11,6 @@ title: "Eurostat Explorer | {{ dataset.code }}"
 layout: base.html
 ---
 
-<!-- TODO: data preprocessor should specify dimensions to group by. Data below is fake. -->
-{% set items = [{stats: ["StatA", "StatB"], cat: "40000"}, {stats: ["StatA",
-"StatB"], cat: "41000"}] %}
-
 <!-- Centered content. -->
 <div id="main-content-container" class="w-full lg:w-[1000px] m-auto">
   <header id="dataset-description" class="leading-4 m-4">
@@ -23,20 +19,20 @@ layout: base.html
   </header>
   <!-- Charts layout behaves different than text layout above. A separate wrapper with auto margin to center the content. -->
   <div class="mx-auto flex flex-col gap-8">
-    {% for item in items %}
+    {% for s in dataset._preprocessed %}
     <div class="w-full p-2 border-2 shadow-xl">
       <ul class="stats text-sm">
-        {% for stat in item.stats %}
+        {% for r in s.rest %}
         <li class="stat">
-          <div class="stat-title">{{ stat }}</div>
-          <div class="stat-value text-xl">Stat value</div>
+          <div class="stat-title">{{ r.dimDescription }}</div>
+          <div class="stat-value text-xl">{{ r.catDescription }}</div>
         </li>
         {% endfor %}
       </ul>
       <div class="divider m-0"></div>
       <dataset-viz
-        dataset-id="aact_ali01"
-        categories="itm_newa={{ item.cat }}&geo=AT&geo=BE&geo=BG&geo=CH&geo=CY&geo=CZ&geo=DE&geo=DK&geo=EE&geo=EL&geo=ES&geo=FI&geo=FR&geo=HR&geo=HU&geo=IE&geo=IS&geo=IT&geo=LT&geo=LU&geo=LV&geo=MT&geo=NL&geo=NO&geo=PL&geo=PT&geo=RO&geo=SE&geo=SI&geo=SK&geo=UK"
+        dataset-id="{{ dataset.code }}"
+        categories="{{ s.categories }}"
         class="w-full aspect-video flex justify-center items-center"
       >
         <span class="loading loading-bars text-primary w-1/4"></span>
