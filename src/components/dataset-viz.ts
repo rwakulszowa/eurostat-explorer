@@ -16,8 +16,18 @@ export class DatasetViz extends HTMLElement {
   static client: EurostatClient;
 
   connectedCallback() {
-    // Display no placeholder - the caller takes care of that.
-    this.render(this.datasetId, this.categories);
+    // At first, nothing is rendered.
+    // This element starts rendering only after it becomes visible.
+    // There may be 100s such elements on a page - too many to render eagerly.
+    onVisible(this, () => {
+      // Remove the attribute to notify the DOM.
+      // CSS uses the attribute to hide spinners while not visible.
+      this.removeAttribute("pending");
+
+      // Trigger rendering logic. Takes care of all the heavy stuff -
+      // fetching data and rendering a plot.
+      this.render(this.datasetId, this.categories);
+    });
   }
 
   /**
@@ -178,4 +188,18 @@ export class DatasetVizLegend extends HTMLElement {
       </ul>
     `;
   }
+}
+
+/**
+ * Trigger `callback` once, when `element` becomes visible.
+ */
+function onVisible(element: HTMLElement, callback: () => void) {
+  new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.intersectionRatio > 0) {
+        callback();
+        observer.disconnect();
+      }
+    });
+  }).observe(element);
 }

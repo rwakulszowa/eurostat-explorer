@@ -14,3 +14,11 @@ body {
    */
   scrollbar-width: thin;
 }
+
+/**
+ * Dataset visualizations are displayed lazily.
+ * JS should remove the `pending` attribute when an element becomes visible.
+ */
+dataset-viz[pending] > * {
+  display: none;
+}
