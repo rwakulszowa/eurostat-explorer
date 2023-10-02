@@ -7,8 +7,9 @@ pagination:
 tags: datasetPages
 
 permalink: "datasets/{{ dataset.code }}/"
-title: "Eurostat Explorer | {{ dataset.code }}"
 layout: base.html
+eleventyComputed:
+  title: "Eurostat Explorer | {{ dataset.code }}"
 ---
 
 <!-- Centered content. -->
