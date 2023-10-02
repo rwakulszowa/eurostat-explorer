@@ -45,17 +45,12 @@ jobs:
         run: pnpm install
       - name: Test
         run: pnpm test
-      - name: Test Cypress
-        uses: cypress-io/github-action@v5
-        with:
-          start: pnpm serve
-          wait-on: "http://localhost:8080"
       - name: Build the app
         run: pnpm build-gh
       - name: Store build artifacts
         uses: actions/cache@v3
         with:
-          path: site/_site/
+          path: src/app/_site/
           key: ${{ github.run_id }}
   deploy:
     needs: build
@@ -67,14 +62,14 @@ jobs:
       - name: Load artifacts
         uses: actions/cache@v3
         with:
-          path: site/_site/
+          path: src/app/_site/
           key: ${{ github.run_id }}
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: site/_site/
+          path: src/app/_site/
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1

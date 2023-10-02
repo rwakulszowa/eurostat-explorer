@@ -6,6 +6,7 @@
   "scripts": {
     "start": "cd src/app && npx @11ty/eleventy --serve",
     "build": "cd src/app && npx @11ty/eleventy",
+    "build-gh": "cd src/app && npx @11ty/eleventy --pathprefix=/eurostat-explorer/",
     "test": "ava"
   },
   "devDependencies": {
