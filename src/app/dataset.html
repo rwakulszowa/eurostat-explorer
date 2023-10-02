@@ -22,11 +22,11 @@ eleventyComputed:
   <div class="mx-auto flex flex-col gap-8">
     {% for s in dataset._preprocessed %}
     <div class="w-full p-2 border-2 shadow-xl">
-      <ul class="stats text-sm">
+      <ul class="stats text-sm lowercase w-full overflow-x-auto">
         {% for r in s.rest %}
-        <li class="stat">
-          <div class="stat-title">{{ r.dimDescription }}</div>
-          <div class="stat-value text-xl">{{ r.catDescription }}</div>
+        <li class="stat p-3">
+          <div class="stat-title text-sm">{{ r.dimDescription }}</div>
+          <div class="stat-value text-base">{{ r.catDescription }}</div>
         </li>
         {% endfor %}
       </ul>
