@@ -8,6 +8,9 @@ body {
     Helvetica,
     sans-serif;
 
+  /**
+   * Some browsers ignore this setting.
+   * Use the default color, because a bright, wide scrollbar looks terrible.
+   */
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--p)) hsl(var(--b2));
 }
