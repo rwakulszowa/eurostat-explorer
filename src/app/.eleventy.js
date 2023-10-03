@@ -1,8 +1,9 @@
+const { EleventyHtmlBasePlugin } = require("@11ty/eleventy");
 const esbuild = require("esbuild");
 const postcss = require("esbuild-postcss");
 
 module.exports = function (eleventyConfig) {
-  eleventyConfig.addWatchTarget("../");
+  eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
 
   eleventyConfig.on("eleventy.before", async () => {
     const app = esbuild.build({
