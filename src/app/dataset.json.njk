@@ -1,0 +1,9 @@
+---
+pagination:
+  data: datasets
+  size: 1
+  alias: dataset
+
+permalink: "datasets/{{ dataset.code }}/data.json"
+---
+{{ dataset | dump(2) | safe }}
