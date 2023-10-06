@@ -10,10 +10,6 @@ module.exports = async function () {
   const details = await Promise.all(datasets.slice(0, 10).map(fetchDetails));
   console.log(`Fetched details`, details[0]);
 
-  for (const d of details) {
-    d._preprocessed = preprocess(d);
-  }
-
   return details;
 };
 
@@ -76,85 +72,4 @@ async function fetchDetails(dataset) {
   }
 
   return body;
-}
-
-/**
- * Group dataset dimensions into chart-friendly subsets.
- */
-function preprocess(datasetDetails) {
-  const { dimensions } = datasetDetails;
-
-  function getDim(code) {
-    const dim = dimensions.find((x) => x.code === code);
-    if (!dim) {
-      throw new Error(`"${code}" dimension not found`);
-    }
-    return dim;
-  }
-
-  // X and Z dimensions are always the same.
-  // Y dimension is fetched from the API dynamically.
-  const x = getDim("time");
-  const z = filterGeo(getDim("geo"));
-
-  // All other dimensions will be combined using a cartesian product, one item at a time.
-  const rest = cartesian(
-    dimensions
-      .filter((d) => d.code !== "time" && d.code !== "geo")
-      .map(flattenDim),
-  );
-
-  // Produce one item per `rest`. It defines the number of charts to display.
-  return rest.map((r) => ({
-    x,
-    z,
-    rest: r,
-    categories: buildQueryParams(
-      [].concat(
-        x.positions.map((p) => [x.code, p.code]),
-        z.positions.map((p) => [z.code, p.code]),
-        r.map((r) => [r.dim, r.cat]),
-      ),
-    ),
-  }));
-}
-
-function buildQueryParams(kvs) {
-  const ret = new URLSearchParams();
-  for (const [k, v] of kvs) {
-    ret.append(k, v);
-  }
-  return ret;
-}
-
-/**
- * Geo dimenion often contains aggregates (such as EU as of year 1234).
- * They make the charts look unreadable, so we filter them out.
- */
-function filterGeo(geoDim) {
-  return {
-    ...geoDim,
-    positions: geoDim.positions.filter(
-      (d) => !d.code.startsWith("EU") && !d.code.startsWith("EA"),
-    ),
-  };
-}
-
-function flattenDim(dim) {
-  const { code: dimCode, description: dimDescription, positions } = dim;
-  return positions.map((pos) => ({
-    dim: dimCode,
-    dimDescription,
-    cat: pos.code,
-    catDescription: pos.description,
-  }));
-}
-
-// Based on https://stackoverflow.com/a/43053803.
-// Added a fix for singleton arguments.
-function cartesian(rows) {
-  return rows.reduce(
-    (acc, xs) => acc.flatMap((a) => xs.map((x) => [...a, x])),
-    [[]],
-  );
 }

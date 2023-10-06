@@ -20,26 +20,7 @@ eleventyComputed:
   </header>
   <!-- Charts layout behaves different than text layout above. A separate wrapper with auto margin to center the content. -->
   <div class="mx-auto flex flex-col gap-8">
-    {% for s in dataset._preprocessed %}
-    <div class="w-full p-2 border-2 shadow-xl">
-      <ul class="stats text-sm lowercase w-full overflow-x-auto">
-        {% for r in s.rest %}
-        <li class="stat p-3">
-          <div class="stat-title text-sm">{{ r.dimDescription }}</div>
-          <div class="stat-value text-base">{{ r.catDescription }}</div>
-        </li>
-        {% endfor %}
-      </ul>
-      <div class="divider m-0"></div>
-      <dataset-viz
-        pending
-        dataset-id="{{ dataset.code }}"
-        categories="{{ s.categories }}"
-        class="w-full aspect-video flex justify-center items-center"
-      >
-        <span class="loading loading-bars text-primary w-1/4"></span>
-      </dataset-viz>
-    </div>
-    {% endfor %}
+    <dataset-view dataset-id="{{ dataset.code }}" class="contents">
+    </dataset-view>
   </div>
 </div>
