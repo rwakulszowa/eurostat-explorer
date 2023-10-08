@@ -3,7 +3,7 @@ layout: base.html
 title: Eurostat Explorer
 ---
 
-<dl class="flex flex-row flex-wrap gap-4">
+<dl class="flex flex-row flex-wrap gap-4 justify-evenly">
   {% for dp in collections.datasetPages %}
   <a
     href="{{ dp.data.page.url }}"
