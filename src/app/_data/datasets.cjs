@@ -7,7 +7,7 @@ module.exports = async function () {
     `Fetched ${datasets.length} datasets: ${datasets.slice(0, 5)}...`,
   );
 
-  const details = await Promise.all(datasets.slice(0, 10).map(fetchDetails));
+  const details = await Promise.all(datasets.slice(0, 1000).map(fetchDetails));
   console.log(`Fetched details`, details[0]);
 
   return details;
