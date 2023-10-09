@@ -7,11 +7,36 @@ title: Eurostat Explorer
   {% for dp in collections.datasetPages %}
   <a
     href="{{ dp.data.page.url }}"
-    class="link link-hover card w-96 bg-base-100 shadow-xl"
+    class="card w-96 bg-base-100 rounded-lg shadow-xl hover:drop-shadow-lg"
   >
-    <div class="card-body">
-      <dt class="card-title">{{ dp.data.dataset.code }}</dt>
+    <div class="card-body pb-0">
+      <dt class="card-title opacity-80">{{ dp.data.dataset.code }}</dt>
       <dd>{{ dp.data.dataset.title }}</dd>
+    </div>
+    <div class="divider"></div>
+    <div class="pb-4 px-8 text-sm leading-7">
+      <ul class="carousel w-full">
+        <!-- First item - a list of dimensions. -->
+        <li class="carousel-item w-full flex flex-col">
+          <p class="my-1 text-base-content opacity-75">Dimensions</p>
+          <ul class="w-full">
+            {% for dim in dp.data.dataset.dimensions %}
+            <li class="w-5/6 truncate">{{ dim.description }}</li>
+            {% endfor %}
+          </ul>
+        </li>
+        <!-- Remaining items - dimensions with a subset of their categories. -->
+        {% for dim in dp.data.dataset.dimensions %}
+        <li class="carousel-item w-full flex flex-col">
+          <p class="my-1 text-base-content opacity-75">{{ dim.description }}</p>
+          <ul class="w-full">
+            {% for cat in dim.positions | batch(5) | first %}
+            <li class="w-5/6 truncate">{{ cat.description }}</li>
+            {% endfor %}
+          </ul>
+        </li>
+        {% endfor %}
+      </ul>
     </div>
   </a>
   {% endfor %}
