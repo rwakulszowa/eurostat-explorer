@@ -7,7 +7,7 @@ module.exports = async function () {
     `Fetched ${datasets.length} datasets: ${datasets.slice(0, 5)}...`,
   );
 
-  const details = await Promise.all(datasets.slice(0, 1000).map(fetchDetails));
+  const details = await Promise.all(datasets.map(retry(fetchDetails, 3)));
   console.log(`Fetched details`, details[0]);
 
   return details;
@@ -56,6 +56,22 @@ async function fetchDatasetsList() {
   }
 
   return allowed.sort();
+}
+
+function retry(cb, limit) {
+  return async function retryImpl(...args) {
+    try {
+      return await cb(...args);
+    } catch (e) {
+      if (limit > 0) {
+        console.warn(`Failed with error=${e}. Retrying.`);
+        return retry(cb, limit - 1);
+      } else {
+        console.error("Retry limit reached.");
+        throw e;
+      }
+    }
+  };
 }
 
 /**
