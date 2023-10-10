@@ -16,39 +16,21 @@ title: Eurostat Explorer
     <div class="divider"></div>
     <div class="pb-4 px-4 text-sm leading-7">
       <ul class="carousel w-full">
-        <!-- First item - a list of dimensions. -->
-        <li class="carousel-item w-full flex flex-row">
-          <div class="m-4 flex-none flex"></div>
-          <div class="w-full flex-1 flex flex-col">
-            <p class="my-1 text-base-content opacity-75">Dimensions</p>
-            <ul class="w-full">
-              {% for dim in dp.data.dataset.dimensions %}
-              <li class="w-5/6 truncate">{{ dim.description }}</li>
-              {% endfor %}
-            </ul>
-          </div>
-          <div class="m-4 flex-none flex flex-col justify-center">
-            <button class="h-fit" onclick="carouselNext(this)">
-              {% lucide "arrow-right" %}
-            </button>
-          </div>
-        </li>
-        <!-- Remaining items - dimensions with a subset of their categories. -->
-        {% for dim in dp.data.dataset.dimensions %}
+        {% for x in dp.data.dataset.dimensions | datasetDimensions %}
         <li class="carousel-item w-full flex flex-row">
           <div class="m-4 flex-none flex flex-col justify-center">
+            {% if not loop.first %}
             <button class="h-fit" onclick="carouselPrev(this)">
               {% lucide "arrow-left" %}
             </button>
+            {% endif %}
           </div>
           <!-- min-w-0 explained here: https://stackoverflow.com/a/66689926 -->
           <div class="w-full flex-1 flex flex-col min-w-0">
-            <p class="my-1 text-base-content opacity-75">
-              {{ dim.description }}
-            </p>
+            <p class="my-1 text-base-content opacity-75">{{ x.label }}</p>
             <ul class="w-full">
-              {% for cat in dim.positions | batch(5) | first %}
-              <li class="w-5/6 truncate">{{ cat.description }}</li>
+              {% for y in x.items %}
+              <li class="w-5/6 truncate">{{ y }}</li>
               {% endfor %}
             </ul>
           </div>
