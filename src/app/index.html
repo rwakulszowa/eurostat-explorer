@@ -18,7 +18,7 @@ title: Eurostat Explorer
       <ul class="carousel w-full">
         <!-- First item - a list of dimensions. -->
         <li class="carousel-item w-full flex flex-row">
-          <button class="m-4 flex-none"></button>
+          <div class="m-4 flex-none flex"></div>
           <div class="w-full flex-1 flex flex-col">
             <p class="my-1 text-base-content opacity-75">Dimensions</p>
             <ul class="w-full">
@@ -27,12 +27,20 @@ title: Eurostat Explorer
               {% endfor %}
             </ul>
           </div>
-          <button class="m-4 flex-none">{% lucide "arrow-right" %}</button>
+          <div class="m-4 flex-none flex flex-col justify-center">
+            <button class="h-fit" onclick="carouselNext(this)">
+              {% lucide "arrow-right" %}
+            </button>
+          </div>
         </li>
         <!-- Remaining items - dimensions with a subset of their categories. -->
         {% for dim in dp.data.dataset.dimensions %}
         <li class="carousel-item w-full flex flex-row">
-          <button class="m-4 flex-none">{% lucide "arrow-left" %}</button>
+          <div class="m-4 flex-none flex flex-col justify-center">
+            <button class="h-fit" onclick="carouselPrev(this)">
+              {% lucide "arrow-left" %}
+            </button>
+          </div>
           <!-- min-w-0 explained here: https://stackoverflow.com/a/66689926 -->
           <div class="w-full flex-1 flex flex-col min-w-0">
             <p class="my-1 text-base-content opacity-75">
@@ -44,9 +52,13 @@ title: Eurostat Explorer
               {% endfor %}
             </ul>
           </div>
-          <button class="m-4 flex-none">
-            {% if not loop.last %} {% lucide "arrow-right" %} {% endif %}
-          </button>
+          <div class="m-4 flex-none flex flex-col justify-center">
+            {% if not loop.last %}
+            <button class="h-fit" onclick="carouselNext(this)">
+              {% lucide "arrow-right" %}
+            </button>
+            {% endif %}
+          </div>
         </li>
         {% endfor %}
       </ul>

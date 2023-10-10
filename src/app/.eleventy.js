@@ -5,7 +5,7 @@ const lucideIcons = require("@grimlink/eleventy-plugin-lucide-icons");
 
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPlugin(EleventyHtmlBasePlugin);
-  eleventyConfig.addPlugin(lucideIcons);
+  eleventyConfig.addPlugin(lucideIcons, { "stroke-width": 1.5 });
 
   eleventyConfig.on("eleventy.before", async () => {
     const app = esbuild.build({
