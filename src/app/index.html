@@ -5,14 +5,14 @@ title: Eurostat Explorer
 
 <dl class="flex flex-row flex-wrap gap-4 justify-evenly">
   {% for dp in collections.datasetPages %}
-  <a
-    href="{{ dp.data.page.url }}"
-    class="card w-96 bg-base-100 rounded-lg shadow-xl hover:drop-shadow-lg"
-  >
-    <div class="card-body pb-0 min-h-[10em] flex-none">
+  <div class="card w-96 bg-base-100 rounded-lg shadow-xl hover:drop-shadow-lg">
+    <a
+      href="{{ dp.data.page.url }}"
+      class="card-body pb-0 min-h-[10em] flex-none"
+    >
       <dt class="card-title opacity-80">{{ dp.data.dataset.code }}</dt>
       <dd>{{ dp.data.dataset.title }}</dd>
-    </div>
+    </a>
     <div class="divider"></div>
     <div class="pb-4 px-8 text-sm leading-7">
       <ul class="carousel w-full">
@@ -38,6 +38,6 @@ title: Eurostat Explorer
         {% endfor %}
       </ul>
     </div>
-  </a>
+  </div>
   {% endfor %}
 </dl>
