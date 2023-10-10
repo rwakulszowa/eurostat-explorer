@@ -12,6 +12,7 @@
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
     "@11ty/eleventy-fetch": "^4.0.0",
+    "@grimlink/eleventy-plugin-lucide-icons": "^1.0.4",
     "@observablehq/plot": "^0.6.10",
     "ava": "^5.3.1",
     "daisyui": "^3.7.4",

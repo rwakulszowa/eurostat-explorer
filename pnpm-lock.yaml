@@ -11,6 +11,9 @@ devDependencies:
   '@11ty/eleventy-fetch':
     specifier: ^4.0.0
     version: 4.0.0
+  '@grimlink/eleventy-plugin-lucide-icons':
+    specifier: ^1.0.4
+    version: 1.0.4
   '@observablehq/plot':
     specifier: ^0.6.10
     version: 0.6.10
@@ -589,6 +592,12 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /@grimlink/eleventy-plugin-lucide-icons@1.0.4:
+    resolution: {integrity: sha512-CK3xPbICpJlxUgXtbjPlgnSjhPmuaHVuLhWf6uU3cfMQ6pP3kF4ycsqadHCqgfs4v6290OI6IZtahDZjAIG5og==}
+    dependencies:
+      lucide-static: 0.257.0
+    dev: true
 
   /@iarna/toml@2.2.5:
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
@@ -2184,6 +2193,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
+    dev: true
+
+  /lucide-static@0.257.0:
+    resolution: {integrity: sha512-0PPgfLYtXXDkNmLtXDJQHKlBIhOlZu7PBzfJg7xeHXpD3TCWdwCC9y1sBnygrE0cKkwgmGGZB7WMEs9JXu32OA==}
     dev: true
 
   /luxon@3.4.3:
