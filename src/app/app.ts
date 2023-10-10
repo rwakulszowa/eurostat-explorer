@@ -34,7 +34,11 @@ function carouselScroll(next: boolean) {
       console.warn("Target carousel item not found.");
       return;
     }
-    targetCarouselItem.scrollIntoView();
+    targetCarouselItem.scrollIntoView({
+      block: "nearest",
+      inline: "nearest",
+      behavior: "smooth",
+    });
   };
 }
 
