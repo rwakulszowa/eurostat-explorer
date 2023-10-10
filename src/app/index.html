@@ -14,26 +14,39 @@ title: Eurostat Explorer
       <dd>{{ dp.data.dataset.title }}</dd>
     </a>
     <div class="divider"></div>
-    <div class="pb-4 px-8 text-sm leading-7">
+    <div class="pb-4 px-4 text-sm leading-7">
       <ul class="carousel w-full">
         <!-- First item - a list of dimensions. -->
-        <li class="carousel-item w-full flex flex-col">
-          <p class="my-1 text-base-content opacity-75">Dimensions</p>
-          <ul class="w-full">
-            {% for dim in dp.data.dataset.dimensions %}
-            <li class="w-5/6 truncate">{{ dim.description }}</li>
-            {% endfor %}
-          </ul>
+        <li class="carousel-item w-full flex flex-row">
+          <button class="m-4 flex-none"></button>
+          <div class="w-full flex-1 flex flex-col">
+            <p class="my-1 text-base-content opacity-75">Dimensions</p>
+            <ul class="w-full">
+              {% for dim in dp.data.dataset.dimensions %}
+              <li class="w-5/6 truncate">{{ dim.description }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <button class="m-4 flex-none">{% lucide "arrow-right" %}</button>
         </li>
         <!-- Remaining items - dimensions with a subset of their categories. -->
         {% for dim in dp.data.dataset.dimensions %}
-        <li class="carousel-item w-full flex flex-col">
-          <p class="my-1 text-base-content opacity-75">{{ dim.description }}</p>
-          <ul class="w-full">
-            {% for cat in dim.positions | batch(5) | first %}
-            <li class="w-5/6 truncate">{{ cat.description }}</li>
-            {% endfor %}
-          </ul>
+        <li class="carousel-item w-full flex flex-row">
+          <button class="m-4 flex-none">{% lucide "arrow-left" %}</button>
+          <!-- min-w-0 explained here: https://stackoverflow.com/a/66689926 -->
+          <div class="w-full flex-1 flex flex-col min-w-0">
+            <p class="my-1 text-base-content opacity-75">
+              {{ dim.description }}
+            </p>
+            <ul class="w-full">
+              {% for cat in dim.positions | batch(5) | first %}
+              <li class="w-5/6 truncate">{{ cat.description }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <button class="m-4 flex-none">
+            {% if not loop.last %} {% lucide "arrow-right" %} {% endif %}
+          </button>
         </li>
         {% endfor %}
       </ul>
