@@ -1,0 +1,4 @@
+---
+permalink: search-index.json
+---
+{{ collections.datasetPages | map(["data", "dataset"]) | index | dump(2) | safe }}
