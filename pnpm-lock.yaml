@@ -17,6 +17,9 @@ devDependencies:
   '@observablehq/plot':
     specifier: ^0.6.10
     version: 0.6.10
+  '@types/lodash':
+    specifier: ^4.14.199
+    version: 4.14.199
   ava:
     specifier: ^5.3.1
     version: 5.3.1
@@ -29,6 +32,9 @@ devDependencies:
   esbuild-postcss:
     specifier: ^0.0.4
     version: 0.0.4(esbuild@0.19.4)(postcss@8.4.29)
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   postcss:
     specifier: ^8.4.29
     version: 8.4.29
@@ -677,6 +683,10 @@ packages:
     dependencies:
       escape-string-regexp: 2.0.0
       lodash.deburr: 4.1.0
+    dev: true
+
+  /@types/lodash@4.14.199:
+    resolution: {integrity: sha512-Vrjz5N5Ia4SEzWWgIVwnHNEnb1UE1XMkvY5DGXrAeOGE9imk0hgTHh5GyDjLDJi9OTCn9oo9dXH1uToK1VRfrg==}
     dev: true
 
   /@types/minimatch@3.0.5:
