@@ -5,14 +5,20 @@ import {
 } from "./components/dataset-viz";
 import { DatasetView, DatasetViewSection } from "./components/dataset-view";
 import { WorkerClient } from "../lib/eurostat-client";
+import { WorkerSearchClient } from "../lib/search-client";
 
-const worker = new Worker(`${document.baseURI}worker.js`, {
+const eurostatWorker = new Worker(`${document.baseURI}eurostat-worker.js`, {
   type: "module",
 });
 
-const client = new WorkerClient(worker);
+const searchWorker = new Worker(`${document.baseURI}search-worker.js`, {
+  type: "module",
+});
 
-DatasetViz.client = client;
+const eurostatClient = new WorkerClient(eurostatWorker);
+const searchClient = new WorkerSearchClient(searchWorker);
+
+DatasetViz.client = eurostatClient;
 
 customElements.define("dataset-view", DatasetView);
 customElements.define("dataset-view-section", DatasetViewSection);

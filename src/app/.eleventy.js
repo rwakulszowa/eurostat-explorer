@@ -128,8 +128,15 @@ module.exports = function (eleventyConfig) {
       sourcemap: true,
     });
 
-    const worker = esbuild.build({
-      entryPoints: ["worker.ts"],
+    const eurostatWorker = esbuild.build({
+      entryPoints: ["eurostat-worker.ts"],
+      bundle: true,
+      outdir: "_site/",
+      sourcemap: true,
+    });
+
+    const searchWorker = esbuild.build({
+      entryPoints: ["search-worker.ts"],
       bundle: true,
       outdir: "_site/",
       sourcemap: true,
@@ -142,7 +149,7 @@ module.exports = function (eleventyConfig) {
       plugins: [postcss()],
     });
 
-    await Promise.all([app, worker, css]);
+    await Promise.all([app, eurostatWorker, searchWorker, css]);
   });
 
   return {
