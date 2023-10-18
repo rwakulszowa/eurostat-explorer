@@ -10,13 +10,17 @@
 
   <body class="overflow-hidden w-screen h-screen flex flex-col">
     <nav class="navbar border-b-2 flex-none">
-      <div class="navbar-start">
+      <div class="navbar-start w-1/3">
         <a
           class="btn btn-ghost normal-case text-base-content opacity-75"
           href="/"
           >eurostat explorer</a
         >
       </div>
+      <div class="navbar-center w-1/3">
+        {% block navbar_center %}{% endblock %}
+      </div>
+      <div class="navbar-end w-1/3"></div>
     </nav>
     <!-- Main takes the whole width and handles overflow. The scroll will be on the right edge of the screen. -->
     <main class="px-8 py-2 w-full overflow-y-auto flex-1">
