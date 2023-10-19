@@ -6,6 +6,7 @@ import {
 import { DatasetView, DatasetViewSection } from "./components/dataset-view";
 import { WorkerClient } from "../lib/eurostat-client";
 import { WorkerSearchClient } from "../lib/search-client";
+import { debounce } from "lodash";
 
 const eurostatWorker = new Worker(`${document.baseURI}eurostat-worker.js`, {
   type: "module",
@@ -62,7 +63,7 @@ async function handleDatasetSearch(
 
 (window as any).carouselNext = carouselScroll(true);
 (window as any).carouselPrev = carouselScroll(false);
-(window as any).handleDatasetSearch = handleDatasetSearch;
+(window as any).handleDatasetSearch = debounce(handleDatasetSearch, 1000);
 
 // Search handler is not attached to window - we can enable it.
 document
