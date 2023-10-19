@@ -3,9 +3,12 @@ layout: list.html
 title: Eurostat Explorer
 ---
 
-<dl class="flex flex-row flex-wrap gap-4 justify-evenly">
+<dl class="dataset-list flex flex-row flex-wrap gap-4 justify-evenly">
   {% for dp in collections.datasetPages %}
-  <div class="card w-96 bg-base-100 rounded-lg shadow-xl hover:drop-shadow-lg">
+  <div
+    id="{{ dp.data.dataset.code }}"
+    class="dataset-item card w-96 bg-base-100 rounded-lg shadow-xl hover:drop-shadow-lg"
+  >
     <a
       href="{{ dp.data.page.url }}"
       class="card-body pb-0 min-h-[10em] flex-none"

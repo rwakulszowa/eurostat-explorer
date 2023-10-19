@@ -48,5 +48,18 @@ function carouselScroll(next: boolean) {
   };
 }
 
+async function handleDatasetSearch(
+  query: string,
+  datasets: Array<HTMLElement>,
+) {
+  const matches = new Set(await searchClient.search(query));
+  // We ignore search results order for now.
+  for (const el of datasets) {
+    const shouldShow = matches.has(el.id);
+    el.toggleAttribute("search-hidden", !shouldShow);
+  }
+}
+
 (window as any).carouselNext = carouselScroll(true);
 (window as any).carouselPrev = carouselScroll(false);
+(window as any).handleDatasetSearch = handleDatasetSearch;

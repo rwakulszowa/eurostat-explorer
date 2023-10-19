@@ -22,3 +22,11 @@ body {
 dataset-viz[pending] > * {
   display: none;
 }
+
+/**
+ * Search feature works by hiding elements that don't match the query.
+ * To decouple CSS from JS, JS only sets the attribute, not touching the CSS directly.
+ */
+.dataset-item[search-hidden] {
+  display: none;
+}
