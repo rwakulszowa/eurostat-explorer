@@ -63,3 +63,8 @@ async function handleDatasetSearch(
 (window as any).carouselNext = carouselScroll(true);
 (window as any).carouselPrev = carouselScroll(false);
 (window as any).handleDatasetSearch = handleDatasetSearch;
+
+// Search handler is not attached to window - we can enable it.
+document
+  .getElementById("dataset-search-input")
+  ?.toggleAttribute("disabled", false);
