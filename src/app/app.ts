@@ -7,6 +7,7 @@ import { DatasetView, DatasetViewSection } from "./components/dataset-view";
 import { DatasetSearch } from "./components/dataset-search";
 import { WorkerClient } from "../lib/eurostat-client";
 import { WorkerSearchClient } from "../lib/search-client";
+import navaid from "navaid";
 
 const eurostatWorker = new Worker(`${document.baseURI}eurostat-worker.js`, {
   type: "module",
@@ -53,3 +54,16 @@ function carouselScroll(next: boolean) {
 
 (window as any).carouselNext = carouselScroll(true);
 (window as any).carouselPrev = carouselScroll(false);
+
+// TODO: target=_self do href; oddzielne pliki .js.
+// router powinien tylko ustawiać jakiś prosty atrybut na jakimś elemencie (np dataset-list page=x).
+// Ograniczyć generację html wewnątrz elementu list - niech dane będą
+// zdefiniowane statycznie, a js tylko zajmuje się filtrowaniem.
+const router = navaid();
+router.on("/", () => {
+  console.log("-> /");
+}).on("/:page?", (params) => {
+  console.log("/:page?", params)
+});
+
+router.listen();
