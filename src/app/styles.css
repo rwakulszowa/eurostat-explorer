@@ -30,3 +30,18 @@ dataset-viz[pending] > * {
 .dataset-item[search-hidden] {
   display: none;
 }
+
+/**
+ * Display at most N elements at once.
+ * No point rendering 7k datasets. Ain't nobody gonna read that.
+ */
+.dataset-list > .dataset-item:nth-child(-n + 100 of :not([search-hidden])) {
+  display: unset;
+}
+
+/**
+ * All other items are hidden.
+ */
+.dataset-list > .dataset-item {
+  display: none;
+}

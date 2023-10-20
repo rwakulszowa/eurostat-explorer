@@ -49,12 +49,20 @@ function carouselScroll(next: boolean) {
   };
 }
 
-async function handleDatasetSearch(
-  query: string,
-  datasets: Array<HTMLElement>,
-) {
+async function handleDatasetSearch(query: string, baseSelector: string) {
+  // This corner case is fairly common, so let's handle it separately.
+  if (!query) {
+    const hiddenDatasetsSelector = `${baseSelector}[search-hidden]`;
+    for (const el of document.querySelectorAll(hiddenDatasetsSelector)) {
+      el.toggleAttribute("search-hidden", false);
+    }
+    return;
+  }
+
+  const datasets = document.querySelectorAll(baseSelector);
   const matches = new Set(await searchClient.search(query));
   // We ignore search results order for now.
+
   for (const el of datasets) {
     const shouldShow = matches.has(el.id);
     el.toggleAttribute("search-hidden", !shouldShow);
