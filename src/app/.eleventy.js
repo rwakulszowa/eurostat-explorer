@@ -124,26 +124,23 @@ module.exports = function (eleventyConfig) {
   });
 
   eleventyConfig.on("eleventy.before", async () => {
-    const app = esbuild.build({
-      entryPoints: ["app.ts"],
+    const tsProps = {
       bundle: true,
       outdir: "_site/",
       sourcemap: true,
-    });
+    };
 
-    const eurostatWorker = esbuild.build({
-      entryPoints: ["eurostat-worker.ts"],
-      bundle: true,
-      outdir: "_site/",
-      sourcemap: true,
-    });
-
-    const searchWorker = esbuild.build({
-      entryPoints: ["search-worker.ts"],
-      bundle: true,
-      outdir: "_site/",
-      sourcemap: true,
-    });
+    const tss = [
+      "index.ts",
+      "dataset.ts",
+      "eurostat-worker.ts",
+      "search-worker.ts",
+    ].map((file) =>
+      esbuild.build({
+        entryPoints: [file],
+        ...tsProps,
+      }),
+    );
 
     const css = esbuild.build({
       entryPoints: ["styles.css"],
@@ -152,7 +149,7 @@ module.exports = function (eleventyConfig) {
       plugins: [postcss()],
     });
 
-    await Promise.all([app, eurostatWorker, searchWorker, css]);
+    await Promise.all([...tss, css]);
   });
 
   return {
