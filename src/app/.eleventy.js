@@ -113,11 +113,14 @@ module.exports = function (eleventyConfig) {
       return sortedIndex;
     }
 
-    const keywordsPerDataset = new Map(
-      datasets.map((d) => [d.code, histogram(keywords(d))]),
+    // Encode dataset ids as numbers to save some space.
+    const datasetIds = datasets.map((d) => d.code);
+
+    const keywordsPerDatasetIndex = new Map(
+      datasets.map((d, i) => [i, histogram(keywords(d))]),
     );
-    const datasetsPerKeyword = reverseIndex(keywordsPerDataset);
-    return indexToSortedArray(datasetsPerKeyword);
+    const datasetsPerKeyword = reverseIndex(keywordsPerDatasetIndex);
+    return { datasetIds, searchIndex: indexToSortedArray(datasetsPerKeyword) };
   });
 
   eleventyConfig.on("eleventy.before", async () => {

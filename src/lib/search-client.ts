@@ -11,7 +11,20 @@ export class BasicSearchClient implements SearchClient {
   private index: Promise<Index>;
 
   constructor(indexPath: string) {
-    this.index = fetch(indexPath).then((resp) => resp.json());
+    this.index = fetch(indexPath)
+      .then((resp) => resp.json())
+      .then(this.decodeRawIndex);
+  }
+
+  private decodeRawIndex(rawIndex: {
+    datasetIds: Array<string>;
+    searchIndex: Array<[string, Array<number>]>;
+  }): Index {
+    const { datasetIds, searchIndex } = rawIndex;
+    return searchIndex.map(([keyword, datasetIxs]) => [
+      keyword,
+      datasetIxs.map((i) => datasetIds[i]),
+    ]);
   }
 
   async search(query: string): Promise<Array<string>> {
