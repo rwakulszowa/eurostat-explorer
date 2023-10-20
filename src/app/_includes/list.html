@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block navbar_center %}
-<div class="form-control w-full">
+<dataset-search class="form-control w-full">
   <!-- Disabled until the script loads. -->
   <input
     id="dataset-search-input"
@@ -7,7 +7,6 @@
     type="text"
     placeholder="Search"
     class="input input-bordered w-full"
-    oninput="handleDatasetSearch(this.value, '.dataset-list > .dataset-item')"
   />
-</div>
+</dataset-search>
 {% endblock %}
