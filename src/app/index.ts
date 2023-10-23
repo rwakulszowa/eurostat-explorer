@@ -1,3 +1,4 @@
+import { DatasetList, DatasetListNav } from "./components/dataset-list";
 import { DatasetSearch } from "./components/dataset-search";
 import { WorkerSearchClient } from "../lib/search-client";
 
@@ -7,9 +8,11 @@ const searchWorker = new Worker(`${document.baseURI}search-worker.js`, {
 
 const searchClient = new WorkerSearchClient(searchWorker);
 
-DatasetSearch.client = searchClient;
+DatasetList.client = searchClient;
 
 customElements.define("dataset-search", DatasetSearch);
+customElements.define("dataset-list", DatasetList, { extends: "dl" });
+customElements.define("dataset-list-nav", DatasetListNav, { extends: "nav" });
 
 function carouselScroll(next: boolean) {
   return function carouselScrollInner(el: HTMLElement) {

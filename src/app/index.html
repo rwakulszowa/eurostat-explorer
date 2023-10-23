@@ -4,7 +4,10 @@ title: Eurostat Explorer
 script: index.js
 ---
 
-<dl class="dataset-list flex flex-row flex-wrap gap-4 justify-evenly">
+<dl
+  is="dataset-list"
+  class="dataset-list flex flex-row flex-wrap gap-4 justify-evenly"
+>
   {% for dp in collections.datasetPages %}
   <div
     id="{{ dp.data.dataset.code }}"
@@ -52,3 +55,7 @@ script: index.js
   </div>
   {% endfor %}
 </dl>
+<nav is="dataset-list-nav" class="join grid grid-cols-2 w-96 m-auto p-8">
+  <button class="join-item btn btn-outline">Previous</button>
+  <button class="join-item btn btn-outline">Next</button>
+</nav>
