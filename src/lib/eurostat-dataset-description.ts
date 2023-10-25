@@ -45,6 +45,17 @@ export class DatasetDescriptionView {
   }
 
   /**
+   * Find a dimension.
+   */
+  find(dim: string): DatasetDescriptionDimension | undefined {
+    return this.datasetDescription.dimensions.find((x) => x.code === dim);
+  }
+
+  get dims(): Array<DatasetDescriptionDimension> {
+    return this.datasetDescription.dimensions;
+  }
+
+  /**
    * Produce a cartesian product of categories.
    *
    * @param {Array<string>} omit - dimensions to omit from the product.

@@ -1,4 +1,6 @@
+import { last } from "lodash";
 import {
+  DatasetDescriptionDimension,
   DatasetDescriptionView,
   fetchDatasetDescription,
 } from "../../lib/eurostat-dataset-description";
@@ -17,10 +19,20 @@ export class DatasetView extends HTMLElement {
       new URL("data.json", window.location.href),
     );
 
-    const datasetId = this.datasetId;
-    const baseCategories = this.baseCategories(description);
+    const xDim = description.find("time")!;
+    const geoDim = description.find("geo");
+    const zDim = geoDim
+      ? this.filterGeo(geoDim)
+      : last(
+          description.dims.filter(
+            (dim) => dim.code !== "time" && dim.code !== "freq",
+          ),
+        )!;
 
-    const children = description.spread(["time", "geo"]).map((s) => {
+    const datasetId = this.datasetId;
+    const baseCategories = this.baseCategories([xDim, zDim]);
+
+    const children = description.spread([xDim.code, zDim.code]).map((s) => {
       const section = document.createElement(
         "dataset-view-section",
       ) as DatasetViewSection;
@@ -38,41 +50,31 @@ export class DatasetView extends HTMLElement {
     this.replaceChildren(...children);
   }
 
-  private baseCategories(ds: DatasetDescriptionView): URLSearchParams {
-    const { dimensions } = ds.datasetDescription;
-
-    function getDim(code: string) {
-      const dim = dimensions.find((x) => x.code === code);
-      if (!dim) {
-        throw new Error(`"${code}" dimension not found`);
-      }
-      return dim;
-    }
-
-    /**
-     * Geo dimenion often contains aggregates (such as EU as of year 1234).
-     * They make the charts look unreadable, so we filter them out.
-     */
-    function filterGeo(geoDim) {
-      return {
-        ...geoDim,
-        positions: geoDim.positions.filter(
-          (d) => !d.code.startsWith("EU") && !d.code.startsWith("EA"),
-        ),
-      };
-    }
-
-    const time = getDim("time");
-    const geo = filterGeo(getDim("geo"));
-
+  private baseCategories(
+    baseDimensions: Array<DatasetDescriptionDimension>,
+  ): URLSearchParams {
     const categories = new URLSearchParams();
-    for (const { code } of geo.positions) {
-      categories.append("geo", code);
-    }
-    for (const { code } of time.positions) {
-      categories.append("time", code);
+    for (const dim of baseDimensions) {
+      for (const { code } of dim.positions) {
+        categories.append(dim.code, code);
+      }
     }
     return categories;
+  }
+
+  /**
+   * Geo dimenion often contains aggregates (such as EU as of year 1234).
+   * They make the charts look unreadable, so we filter them out.
+   */
+  private filterGeo(
+    geoDim: DatasetDescriptionDimension,
+  ): DatasetDescriptionDimension {
+    return {
+      ...geoDim,
+      positions: geoDim.positions.filter(
+        (d) => !d.code.startsWith("EU") && !d.code.startsWith("EA"),
+      ),
+    };
   }
 }
 
