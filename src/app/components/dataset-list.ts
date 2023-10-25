@@ -86,11 +86,11 @@ export class DatasetList extends HTMLDListElement {
   }
 
   private paginate(query: string) {
-    // Rewind to start whenever we paginate.
-    this.setAttribute("page", "0");
     this.idsPerPage = DatasetList.client
       .search(query)
       .then((matches) => chunk(matches, PAGE_SIZE));
+    // Rewind to start whenever we paginate.
+    this.setAttribute("page", "0");
   }
 }
 
