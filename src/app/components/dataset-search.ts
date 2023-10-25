@@ -1,5 +1,6 @@
 import { debounce } from "lodash";
 import { DatasetList } from "./dataset-list";
+import { normalizeQuery } from "../../lib/search";
 
 export class DatasetSearch extends HTMLElement {
   connectedCallback() {
@@ -14,7 +15,7 @@ export class DatasetSearch extends HTMLElement {
   }
 
   private handleDatasetSearch(query: string) {
-    this.datasetListEl.setAttribute("query", query);
+    this.datasetListEl.setAttribute("query", normalizeQuery(query));
   }
 
   get inputEl(): HTMLInputElement {

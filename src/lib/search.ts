@@ -5,6 +5,14 @@ type DatasetId = string;
 type IndexItem = [Keyword, Array<DatasetId>];
 export type Index = Array<IndexItem>;
 
+/**
+ * Remove redundant information from a query string.
+ * Index assumes lowercase input and ignores redundant whitespace.
+ */
+export function normalizeQuery(query: string): string {
+  return query.toLowerCase().trim().split(/\s+/).join(" ");
+}
+
 export function search(index: Index, query: string): Array<DatasetId> {
   const words = query.split(/\s+/);
 
