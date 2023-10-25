@@ -1,4 +1,4 @@
-import { yearToDate } from "./parseUtils";
+import { parseDate } from "./parseUtils";
 
 /**
  * Categories to fetch.
@@ -161,7 +161,7 @@ function parseValuesDimension(
   // Choose a label mapping function depending on the dimension.
   const mapLabel =
     {
-      time: yearToDate as any,
+      time: parseDate as any,
     }[dimId] ?? ((x: any) => x);
 
   const categories: Array<{ id: string; label: string }> = [];

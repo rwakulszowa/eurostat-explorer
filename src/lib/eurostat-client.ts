@@ -4,7 +4,6 @@ import {
   type Categories,
   type DatasetId,
 } from "./eurostat-api";
-import { yearToDate } from "./parseUtils";
 
 type FetchReturn = {
   rows: Array<{}>;
@@ -77,6 +76,12 @@ export class FakeEurostatClient implements EurostatClient {
           }
         }
       }
+    }
+
+    function yearToDate(year: number) {
+      const d = new Date(0);
+      d.setFullYear(year);
+      return d;
     }
 
     const idToLabel = new Map([
