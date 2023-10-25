@@ -1,4 +1,4 @@
-import { search, Index } from "./search";
+import { search, DatasetId, Index } from "./search";
 
 /**
  * Interface for dataset search clients.
@@ -8,10 +8,13 @@ export interface SearchClient {
 }
 
 export class BasicSearchClient implements SearchClient {
-  private index: Promise<Index>;
+  private parsedIndex: Promise<{
+    index: Index;
+    defaultOrder: Array<DatasetId>;
+  }>;
 
   constructor(indexPath: string) {
-    this.index = fetch(indexPath)
+    this.parsedIndex = fetch(indexPath)
       .then((resp) => resp.json())
       .then(this.decodeRawIndex);
   }
@@ -19,16 +22,23 @@ export class BasicSearchClient implements SearchClient {
   private decodeRawIndex(rawIndex: {
     datasetIds: Array<string>;
     searchIndex: Array<[string, Array<number>]>;
-  }): Index {
+  }): { index: Index; defaultOrder: Array<DatasetId> } {
     const { datasetIds, searchIndex } = rawIndex;
-    return searchIndex.map(([keyword, datasetIxs]) => [
-      keyword,
-      datasetIxs.map((i) => datasetIds[i]),
-    ]);
+    return {
+      index: searchIndex.map(([keyword, datasetIxs]) => [
+        keyword,
+        datasetIxs.map((i) => datasetIds[i]),
+      ]),
+      defaultOrder: datasetIds,
+    };
   }
 
   async search(query: string): Promise<Array<string>> {
-    return search(await this.index, query);
+    const { index, defaultOrder } = await this.parsedIndex;
+    if (!query) {
+      return defaultOrder;
+    }
+    return search(index, query);
   }
 }
 

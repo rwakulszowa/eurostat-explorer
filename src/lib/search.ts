@@ -1,7 +1,7 @@
 import { max, range, sortBy, sortedIndexBy, sortedLastIndexBy } from "lodash";
 
 type Keyword = string;
-type DatasetId = string;
+export type DatasetId = string;
 type IndexItem = [Keyword, Array<DatasetId>];
 export type Index = Array<IndexItem>;
 
