@@ -24,18 +24,10 @@ dataset-viz[pending] > * {
 }
 
 /**
- * Search feature works by hiding elements that don't match the query.
- * To decouple CSS from JS, JS only sets the attribute, not touching the CSS directly.
- */
-.dataset-item[search-hidden] {
-  display: none;
-}
-
-/**
  * Display at most N elements at once.
  * No point rendering 7k datasets. Ain't nobody gonna read that.
  */
-.dataset-list > .dataset-item:nth-child(-n + 100 of :not([search-hidden])) {
+.dataset-list > .dataset-item:nth-child(-n + 25) {
   display: unset;
 }
 
