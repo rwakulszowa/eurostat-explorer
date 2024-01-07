@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Eurostat Explorer</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="app.ts"></script>
+  </head>
+  <body>
+    <main>
+      <header>
+        <p>Eurostat Explorer</p>
+      </header>
+      <search>
+        <label>
+          <span>Search for a dataset</span>
+          <input type="search" id="query" oninput="handleSearch(this.value)" />
+        </label>
+
+        <section id="query-results">Results will appear here.</section>
+      </search>
+    </main>
+  </body>
+
+  <template id="search-result-row-template">
+    <div>
+      <slot name="dataset-id">dataset-id</slot>
+      <slot name="dataset-description">dataset-description</slot>
+    </div>
+  </template>
+
+  <template id="search-result-no-results-template">
+    <span>No results found.</span>
+  </template>
+</html>
