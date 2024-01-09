@@ -14,7 +14,11 @@
       <search>
         <label>
           <span>Search for a dataset</span>
-          <input type="search" id="query" oninput="handleSearch(this.value)" />
+          <input
+            type="search"
+            id="query"
+            oninput="handleSearch(this.value, 'query-results')"
+          />
         </label>
 
         <section id="query-results">Results will appear here.</section>

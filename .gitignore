@@ -1,3 +1,7 @@
+# Pnpm, node, etc.
 node_modules/
 dist/
 .parcel-cache/
+
+# Manually built assets
+assets/datasets.json
